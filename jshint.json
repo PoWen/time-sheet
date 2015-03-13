@@ -3,6 +3,5 @@
     "undef": true,
     "unused": true,
     "globals": { },
-    "exported": { "debug": true },
-    "predef": [ ]
+    "exported": { "debug": true }
 }
