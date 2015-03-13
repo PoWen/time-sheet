@@ -1,4 +1,5 @@
 //load outer modules
+var debug = require('debug')('app');
 var path = require('path');
 var express = require('express');
 
@@ -34,7 +35,7 @@ app.set('view engine', 'hbs');
 
 app.set('port', process.env.PORT || 3000);
 
-app.use(express.static(__dirname + '/public'));
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 
@@ -43,7 +44,7 @@ app.use(function (req, res) {
     res.render('404');
 });
 
-app.use(function (err, req, res, next) {
+app.use(function (err, req, res) {
     console.log(err.stack);
     res.status(500);
     res.render('500');
