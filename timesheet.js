@@ -1,8 +1,21 @@
+//load outer modules
+var path = require('path');
 var express = require('express');
 
+//load inner modules
 var routes = require('./routes/routes.js');
 
 var app = express();
+
+switch (app.get('env')) {
+    case 'development':
+        require('./lib/reloadify')(app, __dirname + '/views');
+        break;
+    case 'production':
+        break;
+    default:
+        throw new Error('Unknown execution environment: ' + app.get('env'));
+}
 
 var handlebars = require('express-handlebars').create({
     defaultLayout: 'main',
