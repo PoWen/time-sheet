@@ -4,19 +4,12 @@ var path = require('path');
 var express = require('express');
 
 //load inner modules
+var enviromentSetting = require('./lib/env-setting.js');
 var routes = require('./routes/routes.js');
 
 var app = express();
 
-switch (app.get('env')) {
-    case 'development':
-        require('./lib/reloadify')(app, __dirname + '/views');
-        break;
-    case 'production':
-        break;
-    default:
-        throw new Error('Unknown execution environment: ' + app.get('env'));
-}
+enviromentSetting(app);
 
 var handlebars = require('express-handlebars').create({
     defaultLayout: 'main',
@@ -54,3 +47,5 @@ app.listen(app.get('port'), function () {
     console.log('Expres started on http://localhost:' + app.get('port'));
     console.log('press Ctrl-C to terminate.');
 });
+
+module.exports = app;
