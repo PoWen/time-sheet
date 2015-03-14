@@ -14,14 +14,20 @@ module.exports = function (grunt) {
                     src: ['Gruntfile.js', 'public/qa/**/*.js']
                 }
             }
+        },
+        exec: {
+            jasmine: {
+                cmd: 'jasmine'
+            }
         }
     });
 
     [
-        'grunt-contrib-jshint'
+        'grunt-contrib-jshint',
+        'grunt-exec'
     ].forEach(function (task) {
         grunt.loadNpmTasks(task);
     });
 
-    grunt.registerTask('default', ['jshint']);
+    grunt.registerTask('default', ['jshint', 'exec']);
 };
