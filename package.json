@@ -24,6 +24,7 @@
     "debug": "^2.1.2",
     "express": "^4.12.2",
     "express-handlebars": "^1.2.2",
+    "mongoose": "^3.8.25",
     "uglify-js": "^2.4.17"
   },
   "devDependencies": {

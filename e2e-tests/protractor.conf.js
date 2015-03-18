@@ -7,6 +7,8 @@ exports.config = {
         'browserName': 'chrome',
     },
 
+    directConnect: true,
+    
     baseUrl: 'http://localhost:3000/',
 
     framework: 'jasmine',
