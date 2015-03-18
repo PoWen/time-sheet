@@ -20,6 +20,16 @@ module.exports = function (grunt) {
                 cmd: 'node tests/jasmine.js'
             }
         },
+        karma: {
+            unit: {
+                configFile: 'karma.conf.js',
+            },
+            build: {
+                configFile: 'karma.conf.js',
+                singleRun: true,
+                browsers: ['PhantomJS']
+            }
+        },
         protractor: {
             options: {
                 configFile: "e2e-tests/protractor.conf.js",
@@ -31,11 +41,12 @@ module.exports = function (grunt) {
 
     [
         'grunt-contrib-jshint',
-        'grunt-protractor-runner',
-        'grunt-exec'
+        'grunt-exec',
+        'grunt-karma',
+        'grunt-protractor-runner'
     ].forEach(function (task) {
         grunt.loadNpmTasks(task);
     });
 
-    grunt.registerTask('default', ['jshint', 'exec', 'protractor:all']);
+    grunt.registerTask('default', ['jshint', 'exec', 'karma:build', 'protractor:all']);
 };
