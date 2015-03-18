@@ -17,17 +17,25 @@ module.exports = function (grunt) {
         },
         exec: {
             jasmine: {
-                cmd: 'jasmine'
+                cmd: 'node tests/jasmine.js'
             }
+        },
+        protractor: {
+            options: {
+                configFile: "e2e-tests/protractor.conf.js",
+                keepAlive: true
+            },
+            all: {}
         }
     });
 
     [
         'grunt-contrib-jshint',
+        'grunt-protractor-runner',
         'grunt-exec'
     ].forEach(function (task) {
         grunt.loadNpmTasks(task);
     });
 
-    grunt.registerTask('default', ['jshint', 'exec']);
+    grunt.registerTask('default', ['jshint', 'exec', 'protractor:all']);
 };
