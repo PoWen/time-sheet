@@ -3,6 +3,7 @@
 data
 node_modules
 credentials.js
+public/lib
 
 # Logs
 logs

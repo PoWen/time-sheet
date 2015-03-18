@@ -1,0 +1,22 @@
+{
+  "name": "time-sheet",
+  "version": "0.0.0",
+  "homepage": "https://github.com/Isaddo/time-sheet",
+  "authors": [
+    "Charles <charles@ragic.com>"
+  ],
+  "description": "timesheet app",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "public/lib",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.3.15"
+  }
+}

@@ -1,0 +1,8 @@
+{
+    "node": true,
+    "jasmine": true,
+    "undef": true,
+    "unused": true,
+    "globals": { },
+    "exported": { "debug": true }
+}
