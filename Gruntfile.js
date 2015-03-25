@@ -4,7 +4,12 @@ module.exports = function (grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         jshint: {
-            app: ['<%= pkg.main %>', 'public/js/**/*.js', 'routes/**/*.js', 'lib/**/*.js'],
+            app: [
+                    '<%= pkg.main %>', 
+                    'public/js/**/*.js', 
+                    'routes/**/*.js', 
+                    'lib/**/*.js'
+            ],
             options: {
                 jshintrc: 'jshint.json'
             },
@@ -13,7 +18,11 @@ module.exports = function (grunt) {
                     jshintrc: 'jshint.json'  
                 },
                 files: {
-                    src: ['Gruntfile.js', 'public/qa/**/*.js']
+                    src: [
+                            '*.js',
+                            'public/tests/**/*.js',
+                            'public/e2e-tests/**/*.js',
+                    ]
                 }
             }
         },
