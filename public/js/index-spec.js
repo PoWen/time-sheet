@@ -1,3 +1,5 @@
+'use strict';
+
 /* global testFrontUnitTest */
 describe('test front unit test', function () {
     var testString = testFrontUnitTest();

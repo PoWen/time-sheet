@@ -1,3 +1,5 @@
+'use strict';
+
 //load outer modules
 var debug = require('debug')('app');
 var path = require('path');

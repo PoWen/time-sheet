@@ -3,6 +3,7 @@
     "jasmine": true,
     "undef": true,
     "unused": true,
+    "globalstrict": true,
     "globals": { },
     "exported": { "debug": true }
 }
