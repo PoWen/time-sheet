@@ -3,6 +3,18 @@ var debug = require('debug')('app');
 var path = require('path');
 var express = require('express');
 
+//open the connection to DB
+var db = require('./lib/db-management.js');
+db.init();
+for(var key in db.connection){
+    console.log('The opened db connection is: ' + db.connection[key].name);
+}
+console.log('We have connected to DB: ',db.getDB().toString());
+var userDB = db.getConnection('user');
+db.close('user');
+console.log('After remove connection to user, we connect to DB: ',db.getDB().toString());
+
+
 //load inner modules
 var enviromentSetting = require('./lib/env-setting.js');
 var routes = require('./routes/routes.js');
