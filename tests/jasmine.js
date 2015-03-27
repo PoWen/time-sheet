@@ -1,5 +1,7 @@
+'use strict';
+
 var Jasmine = require('jasmine');
 
-var jasmine = new Jasmine();
-jasmine.loadConfigFile('./tests/jasmine.json');
-jasmine.execute();
+var jsm = new Jasmine();
+jsm.loadConfigFile('./tests/jasmine.json');
+jsm.execute();

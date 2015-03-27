@@ -5,11 +5,7 @@ var debug = require('debug')('app');
 var path = require('path');
 var express = require('express');
 
-//open the connection to DB
-var db = require('./lib/db-management.js');
-db.init();
-
-//load inner modules
+//load inner modules and open the connection to DB
 var enviromentSetting = require('./lib/env-setting.js');
 var routes = require('./routes/routes.js');
 
@@ -21,10 +17,13 @@ var handlebars = require('express-handlebars').create({
     defaultLayout: 'main',
     extname: '.hbs',
     helpers: {
-        section: function (name, options) {
+        'section': function (name, options) {
             if (!this.addedSections) this.addedSections = {};
             this.addedSections[name] = options.fn(this);
             return null;
+        },
+        'raw-helper': function (options) {
+            return options.fn();
         }
     }
 });

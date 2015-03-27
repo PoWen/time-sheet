@@ -1,3 +1,5 @@
+'use strict';
+
 var debug = require('debug')('test');
 var express = require('express');
 
