@@ -3,10 +3,6 @@ var debug = require('debug')('app');
 var path = require('path');
 var express = require('express');
 
-//open the connection to DB
-var db = require('./lib/db-management.js');
-db.init();
-
 //load inner modules
 var enviromentSetting = require('./lib/env-setting.js');
 var routes = require('./routes/routes.js');
