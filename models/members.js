@@ -11,8 +11,4 @@ var memberSchema = new mongoose.Schema({
 
 var Member = dbManager.getDb().model('members', memberSchema);
 
-Member.SchemaOrder = function () {
-	return ['name jobTitle'];
-}
-
 module.exports = Member;
