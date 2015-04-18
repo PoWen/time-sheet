@@ -1,19 +1,15 @@
+{{#section 'head'}}
+  <link href="/lib/angular-ui-grid/ui-grid.min.css" rel="stylesheet">
+  <link href="/css/data-admin.css" rel="stylesheet">
+{{/section}}
+
 {{{{raw-helper}}}}
 <div class="container" ng-controller="DataCtrl">
-  <table class="table">
-    <tr>
-      <th>Name</th>
-      <th>Job Title</th>
-    </tr>
-    <tr ng-repeat="member in members">
-      <td>{{member.name}}</td>
-      <td>{{member.jobTitle}}</td>
-    </tr>
-  </table>
-  Member Number: {{members.length}}
+  <div class="grid-table" ui-grid="gridOptions" ui-grid-edit ui-grid-row-edit ui-grid-cellNav></div>
 </div>
 {{{{/raw-helper}}}}
 
 {{#section 'script'}}
+  <script src="/lib/angular-ui-grid/ui-grid.js"></script>
   <script src="/js/data-members.js"></script>
 {{/section}}
