@@ -5,7 +5,7 @@ var debug = require('debug')('app');
 var path = require('path');
 var express = require('express');
 
-//load inner modules and open the connection to DB
+//load inner modules
 var enviromentSetting = require('./lib/env-setting.js');
 var routes = require('./routes/routes.js');
 
