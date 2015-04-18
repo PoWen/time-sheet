@@ -15,23 +15,12 @@ router.get('/data/members', function (req, res) {
     res.render('members', { title: 'Members' });
 });
 
-router.get('/api/members', function (req, res) {
-    var members = [
-        {
-            name: 'Isaddo',
-            jobTitle: 'CEO'
-        }, {
-            name: 'Powen',
-            jobTitle: 'CTO'
-        }, {
-            name: 'Charles',
-            jobTitle: 'Manager'
-        }, {
-            name: 'Steven',
-            jobTitle: 'Manager'
-        },
-    ];
-    res.json(members);
+router.get('/api/:model', function (req, res) {
+    var Model = dbManager.getDb().model(req.params.model);
+
+    Model.find(function (err, docs) {
+        res.json(docs);
+    });
 });
 
 router.get('/export/:model', function (req, res) { 
