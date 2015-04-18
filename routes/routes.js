@@ -5,7 +5,6 @@ var express = require('express');
 var router = express.Router();
 
 var exportCsv = require('../lib/export-csv.js');
-
 var dbManager = require('../lib/db-manager.js');
 
 router.get('/', function (req, res) {
