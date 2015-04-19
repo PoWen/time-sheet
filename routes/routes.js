@@ -1,20 +1,20 @@
 'use strict';
 
 var debug = require('debug')('routes');
+
 var express = require('express');
 var router = express.Router();
 
-var exportCsv = require('../lib/export-csv.js');
-
-var dbManager = require('../lib/db-manager.js');
+var exportCsv = require.main.require('./routes/export-csv.js');
+var jsonApi = require.main.require('./routes/json-api.js');
+var modelAdmin = require.main.require('./routes/model-admin.js');
 
 router.get('/', function (req, res) {
     res.render('index', { title: 'Time Sheet' });
 });
 
-router.get('/export/:model', function (req, res) { 
-    var Model = dbManager.getDb().model(req.params.model);
-    exportCsv(Model, res);
-});
+router.use('/export', exportCsv);
+router.use('/api', jsonApi);
+router.use('/data', modelAdmin);
 
 module.exports = router;

@@ -1,9 +1,13 @@
 'use strict';
 
-var csvify = require('../lib/csvify.js');
+var express = require('express');
+var router = express.Router();
 
-var exportCsv = function (model, res) {
-    var schema = model.schema;
+var dbManager = require.main.require('./lib/db-manager.js');
+var csvify = require.main.require('./lib/csvify.js');
+
+var exportCsv = function (Model, res) {
+    var schema = Model.schema;
     var headers = [];
 
     var getHeaders = function () {
@@ -23,19 +27,19 @@ var exportCsv = function (model, res) {
     var started = false;
     var start = function (response) {
         response.set('Content-Type','text/csv');
-        response.set('Content-Disposition','attachment; filename=' + model.modelName + '.csv');
+        response.set('Content-Disposition','attachment; filename=' + Model.modelName + '.csv');
         response.write(getHeaders() + '\n');
         started = true;
     };
 
-    var stream = model.find().sort('name').stream();
+    var stream = Model.find().sort('name').stream();
 
-    stream.on('data', function (member) {
+    stream.on('data', function (doc) {
         if (!started) {
             start(res);
         }
 
-        res.write(docToCSV(member) + '\n');
+        res.write(docToCSV(doc) + '\n');
     });
     stream.on('close', function () {
         res.end();
@@ -44,5 +48,10 @@ var exportCsv = function (model, res) {
         res.send(500, { err: err, msg: "Failed to get members from db" });
     });
 };
-    
-module.exports = exportCsv;
+
+router.get('/:model', function (req, res) { 
+    var Model = dbManager.getDb().model(req.params.model);
+    exportCsv(Model, res);
+});
+
+module.exports = router;

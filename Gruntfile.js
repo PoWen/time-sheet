@@ -8,7 +8,8 @@ module.exports = function (grunt) {
                     '<%= pkg.main %>', 
                     'public/js/**/*.js', 
                     'routes/**/*.js', 
-                    'lib/**/*.js'
+                    'lib/**/*.js',
+                    'models/**/*.js'
             ],
             options: {
                 jshintrc: 'jshint.json'
@@ -20,15 +21,15 @@ module.exports = function (grunt) {
                 files: {
                     src: [
                             '*.js',
-                            'public/tests/**/*.js',
-                            'public/e2e-tests/**/*.js',
+                            'tests/**/*.js',
+                            'e2e-tests/**/*.js',
                     ]
                 }
             }
         },
         exec: {
             jasmine: {
-                cmd: 'node tests/jasmine.js'
+                cmd: 'node unit-test.js'
             }
         },
         karma: {

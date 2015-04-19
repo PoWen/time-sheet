@@ -1,9 +1,10 @@
 {
-    "node": true,
-    "jasmine": true,
+    "globalstrict": true,
     "undef": true,
     "unused": true,
-    "globalstrict": true,
-    "globals": { },
+    "sub": true,
+
+    "node": true,
+    "jasmine": true,
     "exported": { "debug": true }
 }

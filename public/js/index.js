@@ -1,6 +1,7 @@
 'use strict';
 
-/* exported testFrontUnitTest */
-var testFrontUnitTest = function () {
-    return 'good';
-};
+/* globals angular */
+
+var app = angular.module('app', []);
+
+app.constant('charles', 'good');

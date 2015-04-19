@@ -1,3 +1,7 @@
+'use strict';
+
+/* globals browser */
+
 describe('time-sheet home page', function () {
     browser.get('');
 

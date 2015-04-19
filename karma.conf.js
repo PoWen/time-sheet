@@ -6,7 +6,11 @@ module.exports = function(config){
     basePath : './',
 
     files : [
+            'public/lib/jquery/dist/jquery.min.js',
+            'public/lib/bootstrap/dist/js/bootstrap.min.js',
+            'public/lib/angular/angular.min.js',
             'public/js/**/!(*[Ss]pec).js',
+            'public/lib/angular-mocks/angular-mocks.js',
             'public/js/**/*[Ss]pec.js',
     ],
 
