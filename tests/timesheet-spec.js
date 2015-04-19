@@ -3,7 +3,7 @@
 var debug = require('debug')('test');
 var express = require('express');
 
-var enviromentSetting = require('../lib/env-setting.js');
+var enviromentSetting = require.main.require('./lib/env-setting.js');
 
 describe('node env setting', function () {
     it('in development', function () {

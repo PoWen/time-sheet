@@ -29,7 +29,7 @@ module.exports = function (grunt) {
         },
         exec: {
             jasmine: {
-                cmd: 'node tests/jasmine.js'
+                cmd: 'node unit-test.js'
             }
         },
         karma: {
