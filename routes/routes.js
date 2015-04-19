@@ -13,8 +13,10 @@ router.get('/', function (req, res) {
     res.render('index', { title: 'Time Sheet' });
 });
 
-router.get('/data/members', function (req, res) {
-    res.render('members', { title: 'Members' });
+router.get('/data/:model', function (req, res) {
+    var Model = dbManager.getDb().model(req.params.model);
+
+    res.render('data-admin', { title: Model.modelName });
 });
 
 router.get('/api/:model', function (req, res) {
@@ -34,7 +36,6 @@ router.use(bodyparser.json());
 router.post('/api/:model', function (req, res) {
     var Model = dbManager.getDb().model(req.params.model);
 
-    console.log('receive', req.body);
     var options = {
         new: true,
         upsert: false,

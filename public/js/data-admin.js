@@ -4,9 +4,12 @@
 
 var app = angular.module('app', ['ui.grid', 'ui.grid.edit', 'ui.grid.rowEdit', 'ui.grid.cellNav']);
 
-app.controller('DataCtrl', ['$scope', '$http', '$q', '$interval', 'uiGridConstants', function ($scope, $http, $q, $interval, uiGridConstants) {
-    $scope.members = [];
-    $scope.newMember = {};
+app.controller('DataCtrl', ['$scope', '$http', '$window', 'uiGridConstants', function ($scope, $http, $window, uiGridConstants) {
+    $scope.docs = [];
+    $scope.toInsertDoc = {};
+
+    var path = $window.location.pathname;
+    var modelName = path.split('/').pop();
 
     // $scope.headers = [
     //         { name: 'name', displayName: '姓名'},
@@ -19,22 +22,22 @@ app.controller('DataCtrl', ['$scope', '$http', '$q', '$interval', 'uiGridConstan
     };
     $scope.gridOptions.onRegisterApi = function (gridApi) {
         $scope.gridApi = gridApi;
-        gridApi.rowEdit.on.saveRow($scope, $scope.saveRow);
+        gridApi.rowEdit.on.saveRow($scope, $scope.saveDoc);
     };
 
-    $scope.saveRow = function (entry) {
-        var promise = $http.post('/api/members', entry).then(function (res) {
+    $scope.saveDoc = function (doc) {
+        var promise = $http.post('/api/' + modelName, doc).then(function (res) {
             var key;
             for (key in res.data.data) {
-                entry[key] = res.data.data[key];
+                doc[key] = res.data.data[key];
             }
 
             if (res.data.isNew) {
-                addRowForNewMember();
+                addRowForInsertDoc();
             }
         });
 
-        $scope.gridApi.rowEdit.setSavePromise( entry, promise );
+        $scope.gridApi.rowEdit.setSavePromise( doc, promise );
     };
 
     $scope.$watch('gridOptions.columnDefs', function (newValue, oldValue) {
@@ -58,15 +61,15 @@ app.controller('DataCtrl', ['$scope', '$http', '$q', '$interval', 'uiGridConstan
         // $scope.gridOptions.columnDefs.splice(idIndex, 1);
     });
 
-    var addRowForNewMember = function () {
-        $scope.newMember = { };
-        $scope.members.push($scope.newMember);
+    var addRowForInsertDoc = function () {
+        $scope.toInsertDoc = { };
+        $scope.docs.push($scope.toInsertDoc);
     };
 
-    $http.get('/api/members').then(function (res) {
-        $scope.members = res.data;
-        addRowForNewMember();
-        $scope.gridOptions.data = $scope.members;
+    $http.get('/api/' + modelName).then(function (res) {
+        $scope.docs = res.data;
+        addRowForInsertDoc();
+        $scope.gridOptions.data = $scope.docs;
     });
 
 }]);
