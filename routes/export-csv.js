@@ -1,5 +1,9 @@
 'use strict';
 
+var express = require('express');
+var router = express.Router();
+
+var dbManager = require('../lib/db-manager.js');
 var csvify = require('../lib/csvify.js');
 
 var exportCsv = function (Model, res) {
@@ -44,5 +48,10 @@ var exportCsv = function (Model, res) {
         res.send(500, { err: err, msg: "Failed to get members from db" });
     });
 };
-    
-module.exports = exportCsv;
+
+router.get('/:model', function (req, res) { 
+    var Model = dbManager.getDb().model(req.params.model);
+    exportCsv(Model, res);
+});
+
+module.exports = router;

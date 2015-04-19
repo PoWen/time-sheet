@@ -13,6 +13,8 @@ router.get('/', function (req, res) {
     res.render('index', { title: 'Time Sheet' });
 });
 
+router.use('/export', exportCsv);
+
 router.get('/data/:model', function (req, res) {
     var Model = dbManager.getDb().model(req.params.model);
 
@@ -25,11 +27,6 @@ router.get('/api/:model', function (req, res) {
     Model.find(function (err, docs) {
         res.json(docs);
     });
-});
-
-router.get('/export/:model', function (req, res) { 
-    var Model = dbManager.getDb().model(req.params.model);
-    exportCsv(Model, res);
 });
 
 router.use(bodyparser.json());
