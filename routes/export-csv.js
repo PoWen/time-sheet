@@ -3,8 +3,8 @@
 var express = require('express');
 var router = express.Router();
 
-var dbManager = require('../lib/db-manager.js');
-var csvify = require('../lib/csvify.js');
+var dbManager = require.main.require('./lib/db-manager.js');
+var csvify = require.main.require('./lib/csvify.js');
 
 var exportCsv = function (Model, res) {
     var schema = Model.schema;
