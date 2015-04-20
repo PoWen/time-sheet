@@ -22,22 +22,39 @@ var findAllDocs = function (modelName) {
 pvt.findAllDocs = findAllDocs;
 
 apiHandlers.saveJsonDocs = function (req, res) {
-    var Model = dbManager.getDb().model(req.params.model);
-
-    var options = {
-        new: true,
-        upsert: false,
-    };
-
-    if (req.body._id === undefined) {
-        Model.create(req.body, function (err, doc) {
+    var toSaveDoc = req.body;
+    if (!exist(toSaveDoc)) {
+        return pvt.createDoc(req.params.model, toSaveDoc).then(function (doc) {
             res.json({ isNew: true, data: doc });
         });
     } else {
-        Model.findOneAndUpdate({ _id: req.body._id }, req.body, options, function (err, doc) {
+        return pvt.updateDoc(req.params.model, toSaveDoc).then(function (doc) {
             res.json({ isNew: false, data: doc });
         });
     }
 };
+
+var exist = function (doc) {
+    if (doc._id === undefined) {
+        return false;
+    } else {
+        return true;
+    }
+};
+pvt.exist = exist;
+
+var createDoc = function (modelName, doc) {
+    var Model = dbManager.getDbModel(modelName);
+    var promise = Model.create(doc);
+    return promise;
+};
+pvt.createDoc = createDoc;
+
+var updateDoc = function (modelName, doc) {
+    var Model = dbManager.getDbModel(modelName);
+    var promise = Model.findOneAndUpdate({ _id: doc._id }, doc).exec();
+    return promise;
+};
+pvt.updateDoc = updateDoc;
 
 module.exports = apiHandlers;
