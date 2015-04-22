@@ -6,12 +6,15 @@ var path = require('path');
 var express = require('express');
 
 //load inner modules
-var enviromentSetting = require.main.require('./lib/env-setting.js');
+var environment = require.main.require('./lib/environment.js');
+var dbManager = require.main.require('./lib/db-manager.js');
 var routes = require.main.require('./routes/routes.js');
 
 var app = express();
 
-enviromentSetting(app);
+environment.set(app);
+
+dbManager.init();
 
 var handlebars = require('express-handlebars').create({
     defaultLayout: 'main',
