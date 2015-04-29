@@ -2,14 +2,68 @@
 
 /* globals angular */
 
-var app = angular.module('app', ['ui.grid', 'ui.grid.edit', 'ui.grid.rowEdit', 'ui.grid.cellNav']);
+var dataAdmin = angular.module('dataAdmin',
+        ['ui.grid', 'ui.grid.edit', 'ui.grid.rowEdit', 'ui.grid.cellNav']);
 
-app.controller('DataCtrl', ['$scope', '$http', '$window', 'uiGridConstants', function ($scope, $http, $window, uiGridConstants) {
+dataAdmin.factory('starter', [function(){
+    var that = {};
+
+    var initFn = function () { };
+
+    that.onInit = function (fn) {
+        initFn = fn;
+    };
+
+    that.init = function () {
+        initFn();
+    };
+
+    return that;
+}]);
+
+dataAdmin.controller('DataCtrl',
+        ['$scope', '$http', '$window', '$timeout', 'uiGridConstants', 'starter',
+        function ($scope, $http, $window, $timeout, uiGridConstants, starter) {
+
     $scope.docs = [];
     $scope.toInsertDoc = {};
 
-    var path = $window.location.pathname;
-    var modelName = path.split('/').pop();
+    $scope.pvt = {};
+    var pvt = $scope.pvt;
+
+    var modelName = '';
+
+    pvt.init = function () {
+        modelName = pvt.getModelName($window.location.pathname);
+        return pvt.getData(modelName).then(pvt.getDataDone);
+    };
+    starter.onInit(pvt.init);
+
+    pvt.getModelName = function (path) {
+        return path.split('/').pop();
+    };
+
+    pvt.getData = function (modelName) {
+        return $http.get('/api/' + modelName).then(function (res) {
+            return res.data;
+        });
+    };
+
+    pvt.getDataDone = function (data) {
+        pvt.assignDataToModel(data);
+        pvt.addEmptyRowForInsertDoc();
+    };
+
+    pvt.assignDataToModel = function (data) {
+        $scope.docs = data;
+        $scope.gridOptions.data = $scope.docs;
+    };
+
+    pvt.addEmptyRowForInsertDoc = function () {
+        $scope.toInsertDoc = { };
+        $scope.docs.push($scope.toInsertDoc);
+    };
+
 
     // $scope.headers = [
     //         { name: 'name', displayName: '姓名'},
@@ -17,6 +71,7 @@ app.controller('DataCtrl', ['$scope', '$http', '$window', 'uiGridConstants', fun
     // ];
 
     $scope.gridOptions = {
+        data: $scope.docs,
         enableFiltering: true,
         columnDefs: $scope.headers
     };
@@ -33,7 +88,7 @@ app.controller('DataCtrl', ['$scope', '$http', '$window', 'uiGridConstants', fun
             }
 
             if (res.data.isNew) {
-                addRowForInsertDoc();
+                pvt.addEmptyRowForInsertDoc();
             }
         });
 
@@ -61,15 +116,5 @@ app.controller('DataCtrl', ['$scope', '$http', '$window', 'uiGridConstants', fun
         // $scope.gridOptions.columnDefs.splice(idIndex, 1);
     });
 
-    var addRowForInsertDoc = function () {
-        $scope.toInsertDoc = { };
-        $scope.docs.push($scope.toInsertDoc);
-    };
-
-    $http.get('/api/' + modelName).then(function (res) {
-        $scope.docs = res.data;
-        addRowForInsertDoc();
-        $scope.gridOptions.data = $scope.docs;
-    });
-
+    starter.init();
 }]);

@@ -2,13 +2,10 @@
 
 /* global inject */
 
-describe('app module', function () {
-    //var module;
+describe('index module', function () {
     beforeEach(function () {
-        module('app');
+        module('index');
     });
-
-    //beforeEach(module('app'));
 
     it('should be registered', function () {
         expect(module).toBeDefined();

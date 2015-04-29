@@ -2,6 +2,6 @@
 
 /* globals angular */
 
-var app = angular.module('app', []);
+var index = angular.module('index', []);
 
-app.constant('charles', 'good');
+index.constant('charles', 'good');

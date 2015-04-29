@@ -11,6 +11,8 @@ exports.config = {
     
     baseUrl: 'http://localhost:3000/',
 
+    rootElement: '.ng-app',
+
     framework: 'jasmine',
 
     jasmineNodeOpts: {
