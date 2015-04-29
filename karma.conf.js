@@ -6,12 +6,13 @@ module.exports = function(config){
     basePath : './',
 
     files : [
-            'public/lib/jquery/dist/jquery.min.js',
-            'public/lib/bootstrap/dist/js/bootstrap.min.js',
-            'public/lib/angular/angular.min.js',
-            'public/js/**/!(*[Ss]pec).js',
+            'public/lib/jquery/dist/jquery.js',
+            'public/lib/bootstrap/dist/js/bootstrap.js',
+            'public/lib/angular/angular.js',
+            'public/lib/angular-ui-grid/ui-grid.js',
+            'public/js/**/*.js',
             'public/lib/angular-mocks/angular-mocks.js',
-            'public/js/**/*[Ss]pec.js',
+            'public/tests/**/*[Ss]pec.js',
     ],
 
     autoWatch : true,
