@@ -3,7 +3,6 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var dbManager = require.main.require('./lib/db-manager.js');
 var fieldAttrsPlugin = require.main.require('./models/field-attrs-plugin.js');
 
 var schema = Schema({
@@ -24,6 +23,6 @@ var attrs = {
 
 schema.plugin(fieldAttrsPlugin, attrs);
 
-var Member = dbManager.getDb().model('members', schema);
+var Member = mongoose.model('members', schema);
 
 module.exports = Member;

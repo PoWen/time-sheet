@@ -2,6 +2,10 @@
 
 var apiHandlers = require.main.require('./routes/handlers/api-handlers.js');
 
+//Model for test example
+var Model = require.main.require('./models/members.js');
+var modelName = Model.modelName;
+
 var Q = require('q');
 
 describe('json api', function () {
@@ -9,27 +13,55 @@ describe('json api', function () {
     beforeEach(function () {
         req = {};
         req.params = {
-            model: 'members'
+            model: modelName
         };
 
         res = {};
         res.json = function () { }; 
     });
-    it('responseJsonDocs function', function (done) {
+
+    it('responseJsonDocs call fucntions and response json', function (done) {
+        var mockDocs = [{ name: 'Charles' }, { name: 'Steven'}];
+        var mockConfig = { name: { name: '姓名' } };
+
+        spyOn(apiHandlers.pvt, 'getConfig').and.returnValue(mockConfig);
+
         var deferred;
         spyOn(apiHandlers.pvt, 'findAllDocs').and.callFake(function () {
             deferred = Q.defer();
             return deferred.promise;
         });
+
         spyOn(res, 'json');
 
-        var resloveValue = [];
+        var target = {
+            config: mockConfig,
+            data: mockDocs,
+        };
+
         apiHandlers.responseJsonDocs(req, res).then(function () {
-            expect(res.json).toHaveBeenCalledWith(resloveValue);
+            expect(res.json).toHaveBeenCalledWith(target);
             done();
         });
 
-        deferred.resolve(resloveValue);
+        expect(apiHandlers.pvt.getConfig).toHaveBeenCalledWith(modelName);
+        expect(apiHandlers.pvt.findAllDocs).toHaveBeenCalledWith(modelName);
+
+        deferred.resolve(mockDocs);
+    });
+
+    it('getConfig return config', function () {
+        var headers = apiHandlers.pvt.getConfig(modelName);
+
+        var target = {
+            _id: { name: null },
+            __v: { name: null },
+            name: { name: '姓名' },
+            jobTitle: { name: '職稱' },
+            department: { name: '部門' },
+        };
+
+        expect(headers).toEqual(target);
     });
 
     describe('saveDocs funnction', function () {

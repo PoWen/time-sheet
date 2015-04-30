@@ -9,10 +9,28 @@ var pvt = apiHandlers.pvt;
 apiHandlers.responseJsonDocs = function (req, res) {
     var modelName = req.params.model;
 
+    var config = pvt.getConfig(modelName);
+
     return pvt.findAllDocs(modelName).then(function (docs) {
-        res.json(docs);
+        res.json({
+            config: config,
+            data: docs,
+        });
     });
 };
+
+var getConfig = function (modelName) {
+    var Model = dbManager.getModel(modelName);
+
+    var result = { };
+    Model.schema.eachPath(function (pathName) {
+        result[pathName] = { };
+        result[pathName].name = Model.getName(pathName);
+    });
+
+    return result;
+};
+pvt.getConfig = getConfig;
 
 var findAllDocs = function (modelName) {
     var Model = dbManager.getDbModel(modelName);
