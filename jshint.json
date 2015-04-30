@@ -3,6 +3,7 @@
     "undef": true,
     "unused": true,
     "sub": true,
+    "newcap": false,
 
     "node": true,
     "jasmine": true,

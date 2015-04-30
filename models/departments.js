@@ -8,8 +8,6 @@ var fieldAttrsPlugin = require.main.require('./models/field-attrs-plugin.js');
 
 var schema = Schema({
     name: String,
-    jobTitle: String,
-    department: { type: Schema.Types.ObjectId, ref: 'departments' }
 });
 
 var createAttr = function (name) {
@@ -17,13 +15,11 @@ var createAttr = function (name) {
 };
 
 var attrs = {
-    name: createAttr('姓名'),
-    jobTitle: createAttr('職稱'),
-    department: createAttr('部門'),
+    name: createAttr('部門名稱'),
 };
 
 schema.plugin(fieldAttrsPlugin, attrs);
 
-var Member = dbManager.getDb().model('members', schema);
+var Department = dbManager.getDb().model('departments', schema);
 
-module.exports = Member;
+module.exports = Department;
