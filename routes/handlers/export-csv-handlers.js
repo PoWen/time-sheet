@@ -39,35 +39,34 @@ var getHeaders = function (modelName) {
 };
 pvt.getHeaders = getHeaders;
 
-var exportStream = function (res, modelName) {
-	var headers = getHeaders(modelName);
-
-	var deferred = Q.defer();
-
-    var docToCSV = function (doc) {
+var headerDocToCSV = function (headers, doc) {
         return headers.map(function (header) {
             var value = doc[header];
             return csvEscape(value);
         }).join(',');
     };
+pvt.headerDocToCSV = headerDocToCSV;
 
-    
-    var started = false;
-    var start = function (response) {
-        response.set('Content-Type','text/csv');
-        response.set('Content-Disposition','attachment; filename=' + modelName + '.csv');
-        response.write(headers.map(csvEscape).join(',') + '\n');
-        started = true;
+var start = function (res, modelName, headers) {
+        res.set('Content-Type','text/csv');
+        res.set('Content-Disposition','attachment; filename=' + modelName + '.csv');
+        res.write(headers.map(csvEscape).join(',') + '\n');
     };
+pvt.start = start;
 
+var exportStream = function (res, modelName) {
+	var headers = getHeaders(modelName);
+	var deferred = Q.defer();
+    var started = false;
     var stream = findAllDocs(modelName);
 
     stream.on('data', function (doc) {
         if (!started) {
-            start(res);
+            start(res, modelName, headers);
+            started = true;
         }
 
-        res.write(docToCSV(doc) + '\n');
+        res.write(headerDocToCSV(headers, doc) + '\n');
     });
     stream.on('close', function () {
         res.end();
