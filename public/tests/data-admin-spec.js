@@ -44,11 +44,20 @@ describe('dataAdmin module', function () {
 
     describe('getData', function () {
         var $httpBackend;
-        var mockResponseData = [
-            {_id: "553729784bc9ee9e7e9d84de", name: "Charles", jobTitle: "CFO"},
-            {_id: "553729784bc9ee9e7e9d84df", name: "Ernie", jobTitle: "CTO"},
-            {_id: "553729784bc9ee9e7e9d84e0", name: "Jeff", jobTitle: "Staff"}
-        ];
+        var mockResponseData = {
+            config: {
+                __v: {name: null},
+                _id: {name: null},
+                department: {name: "部門"},
+                jobTitle: {name: "職稱"},
+                name: {name: "姓名"},
+            },
+            data: [
+                {_id: "553729784bc9ee9e7e9d84de", name: "Charles", jobTitle: "CFO"},
+                {_id: "553729784bc9ee9e7e9d84df", name: "Ernie", jobTitle: "CTO"},
+                {_id: "553729784bc9ee9e7e9d84e0", name: "Jeff", jobTitle: "Staff"},
+            ],
+        };
 
         beforeEach(function () {
             $httpBackend = $injector.get('$httpBackend');
@@ -73,11 +82,11 @@ describe('dataAdmin module', function () {
         it('assign data to model after getDataDone', function () {
             $scope.pvt.assignDataToModel(mockResponseData);
 
-            expect($scope.docs).toEqual(mockResponseData);
+            expect($scope.docs).toEqual(mockResponseData.data);
         });
 
         it('add an empty row for insert data after getDataDone', function () {
-            $scope.docs = mockResponseData;
+            $scope.docs = mockResponseData.data;
             $scope.pvt.addEmptyRowForInsertDoc();
 
             expect($scope.docs.length).toBe(4);

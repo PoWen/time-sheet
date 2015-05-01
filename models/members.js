@@ -11,14 +11,17 @@ var schema = Schema({
     department: { type: Schema.Types.ObjectId, ref: 'departments' }
 });
 
-var createAttr = function (name) {
-    return { name: name };
+var createAttr = function (name, type) {
+    return {
+        name: name,
+        type: type,
+    };
 };
 
 var attrs = {
     name: createAttr('姓名'),
     jobTitle: createAttr('職稱'),
-    department: createAttr('部門'),
+    department: createAttr('部門', 'select'),
 };
 
 schema.plugin(fieldAttrsPlugin, attrs);

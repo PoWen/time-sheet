@@ -55,7 +55,7 @@ dataAdmin.controller('DataCtrl',
     };
 
     pvt.assignDataToModel = function (data) {
-        $scope.docs = data;
+        $scope.docs = data.data;
         $scope.gridOptions.data = $scope.docs;
     };
 
@@ -63,12 +63,6 @@ dataAdmin.controller('DataCtrl',
         $scope.toInsertDoc = { };
         $scope.docs.push($scope.toInsertDoc);
     };
-
-
-    // $scope.headers = [
-    //         { name: 'name', displayName: '姓名'},
-    //         { name: 'jobTitle', displayName: '職稱'},
-    // ];
 
     $scope.gridOptions = {
         data: $scope.docs,

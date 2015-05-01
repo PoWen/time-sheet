@@ -20,48 +20,99 @@ describe('json api', function () {
         res.json = function () { }; 
     });
 
-    it('responseJsonDocs call fucntions and response json', function (done) {
+    it('responseJsonConfigAndData call fucntions and response json', function (done) {
         var mockDocs = [{ name: 'Charles' }, { name: 'Steven'}];
         var mockConfig = { name: { name: '姓名' } };
-
-        spyOn(apiHandlers.pvt, 'getConfig').and.returnValue(mockConfig);
-
-        var deferred;
-        spyOn(apiHandlers.pvt, 'findAllDocs').and.callFake(function () {
-            deferred = Q.defer();
-            return deferred.promise;
-        });
-
-        spyOn(res, 'json');
-
         var target = {
             config: mockConfig,
             data: mockDocs,
         };
 
-        apiHandlers.responseJsonDocs(req, res).then(function () {
+        spyOn(apiHandlers.pvt, 'getConfig').and.callFake(function () {
+            var deferred = Q.defer();
+            deferred.resolve(mockConfig);
+            return deferred.promise;
+        });
+        spyOn(apiHandlers.pvt, 'getData').and.callFake(function () {
+            var deferred = Q.defer();
+            deferred.resolve(mockDocs);
+            return deferred.promise;
+        });
+        spyOn(res, 'json');
+
+        apiHandlers.responseJsonConfigAndData(req, res).then(function () {
+            expect(apiHandlers.pvt.getConfig).toHaveBeenCalledWith(modelName);
+            expect(apiHandlers.pvt.getData).toHaveBeenCalledWith(modelName, mockConfig);
             expect(res.json).toHaveBeenCalledWith(target);
             done();
         });
-
-        expect(apiHandlers.pvt.getConfig).toHaveBeenCalledWith(modelName);
-        expect(apiHandlers.pvt.findAllDocs).toHaveBeenCalledWith(modelName);
-
-        deferred.resolve(mockDocs);
     });
 
-    it('getConfig return config', function () {
-        var headers = apiHandlers.pvt.getConfig(modelName);
+    it('getConfig return config', function (done) {
+        var mockOptions = [
+                {_id: "5540bf5afea91a34148e4dcf", name: "Design"},
+                {_id: "5540d784967634701b47b107", name: "Develope"},
+                {_id: "5540bf94721b2f7c1660fa8f", name: "Admin"},
+        ];
+
+        spyOn(apiHandlers.pvt, 'getOptions').and.callFake(function () {
+            var deferred = Q.defer();
+            deferred.resolve(mockOptions);
+            return deferred.promise;
+        });
 
         var target = {
-            _id: { name: null },
-            __v: { name: null },
-            name: { name: '姓名' },
-            jobTitle: { name: '職稱' },
-            department: { name: '部門' },
+            model: modelName,
+            fields: {
+                _id: { }, //no attrs return empty object
+                __v: { },
+                name: { name: '姓名' },
+                jobTitle: { name: '職稱' },
+                department: {
+                    name: '部門',
+                    type: 'select',
+                    options: mockOptions,
+                },
+            },
         };
 
-        expect(headers).toEqual(target);
+        apiHandlers.pvt.getConfig(modelName).then(function (config) {
+            expect(config).toEqual(target);
+            done();
+        });
+    });
+
+    it('getSelectFields', function () {
+        var attrs = apiHandlers.pvt.getFieldAttrs(modelName);
+        var selectFields = apiHandlers.pvt.getSelectFields(attrs);
+
+        var target = [ 'department' ];
+
+        expect(selectFields).toEqual(target);
+    });
+
+    it('getRefModelName', function () {
+        var field = 'department';
+
+        var refModelName = apiHandlers.pvt.getRefModelName(modelName, field);
+
+        var target = 'departments';
+
+        expect(refModelName).toEqual(target);
+    });
+
+    it('getFieldAttrs return', function () {
+        var attrs = apiHandlers.pvt.getFieldAttrs(modelName);
+
+        var target = {
+            _id: { },
+            __v: { },
+            name: { name: '姓名' },
+            jobTitle: { name: '職稱' },
+            department: { name: '部門', type: 'select' },
+        };
+
+        expect(attrs).toEqual(target);
     });
 
     describe('saveDocs funnction', function () {
