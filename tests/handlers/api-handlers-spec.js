@@ -61,19 +61,14 @@ describe('json api', function () {
             return deferred.promise;
         });
 
+        var fieldAttrs = Model.getFieldAttrs();
+        fieldAttrs._id = { };
+        fieldAttrs.__v = { };
+        fieldAttrs.department.options = mockOptions;
+
         var target = {
             model: modelName,
-            fields: {
-                _id: { }, //no attrs return empty object
-                __v: { },
-                name: { name: '姓名' },
-                jobTitle: { name: '職稱' },
-                department: {
-                    name: '部門',
-                    type: 'select',
-                    options: mockOptions,
-                },
-            },
+            fields: fieldAttrs,
         };
 
         apiHandlers.pvt.getConfig(modelName).then(function (config) {
@@ -104,13 +99,11 @@ describe('json api', function () {
     it('getFieldAttrs return', function () {
         var attrs = apiHandlers.pvt.getFieldAttrs(modelName);
 
-        var target = {
-            _id: { },
-            __v: { },
-            name: { name: '姓名' },
-            jobTitle: { name: '職稱' },
-            department: { name: '部門', type: 'select' },
-        };
+        var fieldAttrs = Model.getFieldAttrs();
+        fieldAttrs._id = { };
+        fieldAttrs.__v = { };
+
+        var target = fieldAttrs;
 
         expect(attrs).toEqual(target);
     });

@@ -25,12 +25,18 @@ dataAdmin.controller('DataCtrl',
         ['$scope', '$http', '$window', '$timeout', 'uiGridConstants', 'starter',
         function ($scope, $http, $window, $timeout, uiGridConstants, starter) {
 
-    $scope.docs = [];
-    $scope.toInsertDoc = {};
-
     $scope.pvt = {};
     var pvt = $scope.pvt;
 
+    $scope.docs = [];
+    $scope.toInsertDoc = {};
+
+    $scope.gridOptions = {
+        data: $scope.docs,
+        enableFiltering: true,
+        columnDefs: [],
+    };
+    
     var modelName = '';
 
     pvt.init = function () {
@@ -50,12 +56,35 @@ dataAdmin.controller('DataCtrl',
     };
 
     pvt.getDataDone = function (data) {
-        pvt.assignDataToModel(data);
+        pvt.buildColumnDefs(data.config);
+        pvt.assignDataToModel(data.data);
         pvt.addEmptyRowForInsertDoc();
     };
 
+    pvt.buildColumnDefs = function (config) {
+        var columns = [ ];
+
+        var name, column, field;
+        for (name in config.fields) {
+            field = config.fields[name];
+            if (isVisible(field)) {
+                column = {};
+                column.name = name;
+                column.field = name;
+                column.displayName = field.name;
+
+                columns[field.col] = column;
+            }
+        }
+
+        $scope.gridOptions.columnDefs = columns;
+    };
+    var isVisible = function (field) {
+        return !!field.name;
+    };
+
     pvt.assignDataToModel = function (data) {
-        $scope.docs = data.data;
+        $scope.docs = data;
         $scope.gridOptions.data = $scope.docs;
     };
 
@@ -64,11 +93,6 @@ dataAdmin.controller('DataCtrl',
         $scope.docs.push($scope.toInsertDoc);
     };
 
-    $scope.gridOptions = {
-        data: $scope.docs,
-        enableFiltering: true,
-        columnDefs: $scope.headers
-    };
     $scope.gridOptions.onRegisterApi = function (gridApi) {
         $scope.gridApi = gridApi;
         gridApi.rowEdit.on.saveRow($scope, $scope.saveDoc);

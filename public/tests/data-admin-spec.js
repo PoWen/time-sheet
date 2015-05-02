@@ -46,11 +46,14 @@ describe('dataAdmin module', function () {
         var $httpBackend;
         var mockResponseData = {
             config: {
-                __v: {name: null},
-                _id: {name: null},
-                department: {name: "部門"},
-                jobTitle: {name: "職稱"},
-                name: {name: "姓名"},
+                fields: {
+                    __v: { },
+                    _id: { },
+                    department: { name: "部門", col: 2, type: "select" },
+                    jobTitle: { name: "職稱", col: 1 },
+                    name: { name: "姓名", col: 0 },
+                },
+                model: 'members',
             },
             data: [
                 {_id: "553729784bc9ee9e7e9d84de", name: "Charles", jobTitle: "CFO"},
@@ -80,9 +83,22 @@ describe('dataAdmin module', function () {
         });
 
         it('assign data to model after getDataDone', function () {
-            $scope.pvt.assignDataToModel(mockResponseData);
+            $scope.pvt.assignDataToModel(mockResponseData.data);
 
             expect($scope.docs).toEqual(mockResponseData.data);
+            expect($scope.gridOptions.data).toEqual(mockResponseData.data);
+        });
+
+        it('build columnDefs', function () {
+            $scope.pvt.buildColumnDefs(mockResponseData.config);
+
+            var target = [
+                { name: 'name', field: 'name', displayName: '姓名'},
+                { name: 'jobTitle', field: 'jobTitle', displayName: '職稱' },
+                { name: 'department', field: 'department', displayName: '部門'},
+            ];
+
+            expect($scope.gridOptions.columnDefs).toEqual(target);
         });
 
         it('add an empty row for insert data after getDataDone', function () {

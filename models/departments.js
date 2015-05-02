@@ -9,12 +9,16 @@ var schema = Schema({
     name: String,
 });
 
-var createAttr = function (name) {
-    return { name: name };
+var createAttr = function (name, col, type) {
+    return {
+        name: name,
+        col: col,
+        type: type,
+    };
 };
 
 var attrs = {
-    name: createAttr('部門名稱'),
+    name: createAttr('部門名稱', 0),
 };
 
 schema.plugin(fieldAttrsPlugin, attrs);
