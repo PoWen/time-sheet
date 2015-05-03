@@ -12,15 +12,15 @@ var pvt = apiHandlers.pvt;
 apiHandlers.responseJsonConfigAndData = function (req, res) {
     var modelName = req.params.model;
 
-    var config;
-    return pvt.getConfig(modelName).then(function (c) {
-        config = c;
-        return pvt.getData(modelName, config);
-    }).then(function (data) {
-        res.json({
-            config: config,
-            data: data,
+    return pvt.getConfig(modelName).then(function (config) {
+        return pvt.getData(modelName, config).then(function (data) {
+            res.json({
+                config: config,
+                data: data,
+            });
         });
+    }).catch(function (error) {
+        console.log(error.stack);
     });
 };
 
@@ -103,12 +103,19 @@ var getFieldAttrs = function (modelName) {
 pvt.getFieldAttrs = getFieldAttrs;
 
 var getData = function (modelName) {
-    return findAllDocs(modelName);
+    return pvt.findAllDocs(modelName).then(function (docs) {
+        var Model = mongoose.model(modelName);
+        var opts = {
+            path: 'department',
+            select: 'name'
+        };
+        return Model.populate(docs, opts);
+    });
 };
 pvt.getData = getData;
 
 var findAllDocs = function (modelName) {
-    var Model = dbManager.getDbModel(modelName);
+    var Model = mongoose.model(modelName);
     var promise = Model.find().exec();
     return promise;
 };
