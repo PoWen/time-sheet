@@ -22,28 +22,85 @@ describe('json api', function () {
         res.json = function () { }; 
     });
 
+    it('responseJsonConfigAndData', function (done) {
+        var mockDocs = [{ name: 'Charles' }, { name: 'Steven'}];
+        var mockConfig = { name: { name: '姓名' } };
+
+        var target = {
+            config: mockConfig,
+            data: mockDocs,
+        };
+
+        spyOn(pvt, 'getConfig').and.callFake(P.resolve(mockConfig));
+        spyOn(pvt, 'getData').and.callFake(P.resolve(mockDocs));
+        spyOn(res, 'json');
+
+        apiHandlers.responseJsonConfigAndData(req, res).then(function () {
+            expect(pvt.getConfig).toHaveBeenCalledWith(modelName);
+            expect(pvt.getData).toHaveBeenCalledWith(modelName, mockConfig);
+            expect(res.json).toHaveBeenCalledWith(target);
+            done();
+        });
+    });
+
     describe('get model data', function () {
-        it('responseJsonConfigAndData', function (done) {
-            var mockDocs = [{ name: 'Charles' }, { name: 'Steven'}];
-            var mockConfig = { name: { name: '姓名' } };
+        it('getData', function (done) {
+            var mockDocs = [
+                {
+                    "_id": "5542437cf79f7879d4048581",
+                    "name": "Charles",
+                    "jobTitle": "CEO",
+                    "department": "5540bf94721b2f7c1660fa8f"
+                }, {
+                    "_id": "5542437cf79f7879d4048582",
+                    "name": "Ernie",
+                    "jobTitle": "CTO"
+                }, {
+                    "_id": "5542437cf79f7879d4048583",
+                    "name": "Steven",
+                    "jobTitle": "Staff",
+                    "department": "5540d784967634701b47b107"
+                }
+            ];
 
-            var target = {
-                config: mockConfig,
-                data: mockDocs,
-            };
+            var mockData = [
+                {
+                    "_id": "5542437cf79f7879d4048581",
+                    "name": "Charles",
+                    "jobTitle": "CEO",
+                    "department": {
+                        "_id": "5540bf94721b2f7c1660fa8f",
+                        "name": "Admin"
+                    }
+                }, {
+                    "department": null,
+                    "_id": "5542437cf79f7879d4048582",
+                    "name": "Ernie",
+                    "jobTitle": "CTO"
+                }, {
+                    "_id": "5542437cf79f7879d4048583",
+                    "name": "Steven",
+                    "jobTitle": "Staff",
+                    "department": {
+                        "_id": "5540d784967634701b47b107",
+                        "name": "Develope"
+                    }
+                }
+            ];
 
-            spyOn(pvt, 'getConfig').and.callFake(P.resolve(mockConfig));
-            spyOn(pvt, 'getData').and.callFake(P.resolve(mockDocs));
-            spyOn(res, 'json');
+            spyOn(pvt, 'findAllDocs').and.callFake(P.resolve(mockDocs));
+            spyOn(Model, 'populate').and.callFake(P.resolve(mockData));
 
-            apiHandlers.responseJsonConfigAndData(req, res).then(function () {
-                expect(pvt.getConfig).toHaveBeenCalledWith(modelName);
-                expect(pvt.getData).toHaveBeenCalledWith(modelName, mockConfig);
-                expect(res.json).toHaveBeenCalledWith(target);
+            var target = mockData;
+
+            pvt.getData(modelName).then(function (data) {
+                expect(data).toEqual(target);
                 done();
             });
         });
+    });
 
+    describe('get model config for front-end', function () {
         it('getConfig return config', function (done) {
             var mockOptions = [
                     {_id: "5540bf5afea91a34148e4dcf", name: "Design"},
@@ -98,61 +155,6 @@ describe('json api', function () {
             var target = fieldAttrs;
 
             expect(attrs).toEqual(target);
-        });
-
-        it('getData', function (done) {
-            var mockDocs = [
-                {
-                    "_id": "5542437cf79f7879d4048581",
-                    "name": "Charles",
-                    "jobTitle": "CEO",
-                    "department": "5540bf94721b2f7c1660fa8f"
-                }, {
-                    "_id": "5542437cf79f7879d4048582",
-                    "name": "Ernie",
-                    "jobTitle": "CTO"
-                }, {
-                    "_id": "5542437cf79f7879d4048583",
-                    "name": "Steven",
-                    "jobTitle": "Staff",
-                    "department": "5540d784967634701b47b107"
-                }
-            ];
-
-            var mockData = [
-                {
-                    "_id": "5542437cf79f7879d4048581",
-                    "name": "Charles",
-                    "jobTitle": "CEO",
-                    "department": {
-                        "_id": "5540bf94721b2f7c1660fa8f",
-                        "name": "Admin"
-                    }
-                }, {
-                    "department": null,
-                    "_id": "5542437cf79f7879d4048582",
-                    "name": "Ernie",
-                    "jobTitle": "CTO"
-                }, {
-                    "_id": "5542437cf79f7879d4048583",
-                    "name": "Steven",
-                    "jobTitle": "Staff",
-                    "department": {
-                        "_id": "5540d784967634701b47b107",
-                        "name": "Develope"
-                    }
-                }
-            ];
-
-            spyOn(pvt, 'findAllDocs').and.callFake(P.resolve(mockDocs));
-            spyOn(Model, 'populate').and.callFake(P.resolve(mockData));
-
-            var target = mockData;
-
-            pvt.getData(modelName).then(function (data) {
-                expect(data).toEqual(target);
-                done();
-            });
         });
     });
 
