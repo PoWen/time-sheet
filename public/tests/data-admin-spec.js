@@ -6,6 +6,7 @@ describe('dataAdmin module', function () {
     beforeEach(module('dataAdmin'));
 
     var $injector, $scope, $window;
+    var pvt;
 
     beforeEach(inject(function (_$injector_) {
         $injector = _$injector_;
@@ -28,21 +29,47 @@ describe('dataAdmin module', function () {
             $window: $window,
             starter: starter,
         });
+
+        pvt = $scope.pvt;
     }));
 
     it('call getModelName and getData when init', function () {
-        spyOn($scope.pvt, 'getModelName').and.callThrough();
+        spyOn(pvt, 'getModelName').and.callThrough();
 
         var $q = $injector.get('$q');
-        spyOn($scope.pvt, 'getData').and.returnValue($q.defer().promise);
+        spyOn(pvt, 'getData').and.returnValue($q.defer().promise);
 
-        $scope.pvt.init();
+        pvt.init();
 
-        expect($scope.pvt.getModelName).toHaveBeenCalledWith('/data/members');
-        expect($scope.pvt.getData).toHaveBeenCalledWith('members');
+        expect(pvt.getModelName).toHaveBeenCalledWith('/data/members');
+        expect(pvt.getData).toHaveBeenCalledWith('members');
     });
 
     describe('getData', function () {
+        var mockData = [
+            {
+                "_id": "5542437cf79f7879d4048581",
+                "name": "Charles",
+                "jobTitle": "CEO",
+                "department": {
+                    "_id": "5540bf94721b2f7c1660fa8f",
+                    "name": "Admin"
+                }
+            }, {
+                "department": null,
+                "_id": "5542437cf79f7879d4048582",
+                "name": "Ernie",
+                "jobTitle": "CTO"
+            }, {
+                "_id": "5542437cf79f7879d4048583",
+                "name": "Steven",
+                "jobTitle": "Staff",
+                "department": {
+                    "_id": "5540d784967634701b47b107",
+                    "name": "Develope"
+                }
+            }
+        ];
         var $httpBackend;
         var mockResponseData = {
             config: {
@@ -50,16 +77,12 @@ describe('dataAdmin module', function () {
                     __v: { },
                     _id: { },
                     department: { name: "部門", col: 2, type: "select" },
-                    jobTitle: { name: "職稱", col: 1 },
                     name: { name: "姓名", col: 0 },
+                    jobTitle: { name: "職稱", col: 1 },
                 },
                 model: 'members',
             },
-            data: [
-                {_id: "553729784bc9ee9e7e9d84de", name: "Charles", jobTitle: "CFO"},
-                {_id: "553729784bc9ee9e7e9d84df", name: "Ernie", jobTitle: "CTO"},
-                {_id: "553729784bc9ee9e7e9d84e0", name: "Jeff", jobTitle: "Staff"},
-            ],
+            data: mockData,
         };
 
         beforeEach(function () {
@@ -75,7 +98,7 @@ describe('dataAdmin module', function () {
         it('get data from api/:modelName', function () {
             $httpBackend.expectGET('/api/members');
 
-            $scope.pvt.getData('members').then(function (data) {
+            pvt.getData('members').then(function (data) {
                 expect(data).toEqual(mockResponseData);
             });
 
@@ -83,27 +106,54 @@ describe('dataAdmin module', function () {
         });
 
         it('assign data to model after getDataDone', function () {
-            $scope.pvt.assignDataToModel(mockResponseData.data);
+            pvt.assignDataToModel(mockResponseData.data);
 
             expect($scope.docs).toEqual(mockResponseData.data);
             expect($scope.gridOptions.data).toEqual(mockResponseData.data);
         });
 
         it('build columnDefs', function () {
-            $scope.pvt.buildColumnDefs(mockResponseData.config);
+            pvt.buildColumnDefs(mockResponseData.config);
 
             var target = [
                 { name: 'name', field: 'name', displayName: '姓名'},
                 { name: 'jobTitle', field: 'jobTitle', displayName: '職稱' },
-                { name: 'department', field: 'department', displayName: '部門'},
+                { name: 'department', field: 'department.name', displayName: '部門'},
             ];
 
             expect($scope.gridOptions.columnDefs).toEqual(target);
         });
 
+        describe('adaptToColumnDef', function () {
+            var testSpecs = [
+                {
+                    field: { _id: { } },
+                    target: null,
+                },
+                {
+                    field: { name: "職稱", col: 1 },
+                    target: {},
+                },
+                {
+                    field: { name: "部門", col: 2, type: "select" },
+                    target: {},
+                }
+            ];
+
+            it('adaptToColumnDef', function () {
+                var field = { _id: { } };
+                var columnDef = pvt.adaptToColumnDef(field);
+
+                var target = null;
+
+                expect(columnDef).toEqual(target);
+
+            });
+        });
+
         it('add an empty row for insert data after getDataDone', function () {
             $scope.docs = mockResponseData.data;
-            $scope.pvt.addEmptyRowForInsertDoc();
+            pvt.addEmptyRowForInsertDoc();
 
             expect($scope.docs.length).toBe(4);
             expect($scope.docs[3]).toEqual({ });

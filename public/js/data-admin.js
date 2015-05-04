@@ -73,12 +73,21 @@ dataAdmin.controller('DataCtrl',
                 column.field = name;
                 column.displayName = field.name;
 
+                if (name === 'department') {
+                    column.field = 'department.name';
+                }
+
                 columns[field.col] = column;
             }
         }
 
         $scope.gridOptions.columnDefs = columns;
     };
+
+    pvt.adaptToColumnDef = function (field) {
+        if (!isVisible(field)) return null;
+    };
+
     var isVisible = function (field) {
         return !!field.name;
     };
