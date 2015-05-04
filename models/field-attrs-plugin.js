@@ -7,6 +7,11 @@ var clone = function (obj) {
 var fieldAttrsPlugin = function (schema, options) {
     var fields = options || { };
 
+    var key;
+    for (key in fields) {
+        fields[key].key = key;
+    }
+
     var hasField = function (field) {
         return fields[field] !== undefined;
     };
