@@ -70,18 +70,19 @@ describe('dataAdmin module', function () {
                 }
             }
         ];
+        var mockConfig = {
+            fields: {
+                __v: {},
+                _id: {},
+                department: {key: 'department', name: '部門', col: 2, type: 'select'},
+                name: {key: 'name', name: '姓名', col: 0 },
+                jobTitle: {key: 'jobTitle', name: '職稱', col: 1 },
+            },
+            model: 'members',
+        };
         var $httpBackend;
         var mockResponseData = {
-            config: {
-                fields: {
-                    __v: { },
-                    _id: { },
-                    department: { name: "部門", col: 2, type: "select" },
-                    name: { name: "姓名", col: 0 },
-                    jobTitle: { name: "職稱", col: 1 },
-                },
-                model: 'members',
-            },
+            config: mockConfig,
             data: mockData,
         };
 
@@ -131,23 +132,28 @@ describe('dataAdmin module', function () {
                     target: null,
                 },
                 {
-                    field: { name: "職稱", col: 1 },
-                    target: {},
+                    field: { key: 'jobTitle', name: '職稱', col: 1 },
+                    target: { 
+                        name: 'jobTitle',
+                        field: 'jobTitle',
+                        displayName: '職稱',
+                    },
                 },
                 {
-                    field: { name: "部門", col: 2, type: "select" },
-                    target: {},
-                }
+                    field: { key: 'department', name: '部門', col: 2, type: 'select' },
+                    target: { 
+                        name: 'department',
+                        field: 'department.name',
+                        displayName: '部門',
+                    },
+                },
             ];
 
-            it('adaptToColumnDef', function () {
-                var field = { _id: { } };
-                var columnDef = pvt.adaptToColumnDef(field);
-
-                var target = null;
-
-                expect(columnDef).toEqual(target);
-
+            testSpecs.forEach(function (spec) {
+                it('adaptToColumnDef', function () {
+                    var columnDef = pvt.adaptToColumnDef(spec.field);
+                    expect(columnDef).toEqual(spec.target);
+                });
             });
         });
 

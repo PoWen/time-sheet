@@ -67,16 +67,9 @@ dataAdmin.controller('DataCtrl',
         var name, column, field;
         for (name in config.fields) {
             field = config.fields[name];
-            if (isVisible(field)) {
-                column = {};
-                column.name = name;
-                column.field = name;
-                column.displayName = field.name;
 
-                if (name === 'department') {
-                    column.field = 'department.name';
-                }
-
+            column = pvt.adaptToColumnDef(field);
+            if (column !== null) {
                 columns[field.col] = column;
             }
         }
@@ -86,6 +79,18 @@ dataAdmin.controller('DataCtrl',
 
     pvt.adaptToColumnDef = function (field) {
         if (!isVisible(field)) return null;
+
+        var column = {};
+        column.name = field.key;
+        column.displayName = field.name;
+
+        if (field.type === 'select') {
+            column.field = field.key + '.name';
+        } else {
+            column.field = field.key;
+        }
+
+        return column;
     };
 
     var isVisible = function (field) {
