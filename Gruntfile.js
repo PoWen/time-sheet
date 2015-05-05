@@ -34,17 +34,17 @@ module.exports = function (grunt) {
         },
         karma: {
             unit: {
-                configFile: 'karma.conf.js',
+                configFile: 'tests/frontend/karma.conf.js',
             },
             build: {
-                configFile: 'karma.conf.js',
+                configFile: 'tests/frontend/karma.conf.js',
                 singleRun: true,
                 browsers: ['PhantomJS']
             }
         },
         protractor: {
             options: {
-                configFile: "e2e-tests/protractor.conf.js",
+                configFile: "tests/e2e/protractor.conf.js",
                 keepAlive: true
             },
             all: {}

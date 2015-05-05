@@ -70,11 +70,11 @@ describe('dataAdmin module', function () {
                 }
             }
         ];
-        var mockOptions = [
-            {_id: "5540bf5afea91a34148e4dcf", name: "Design"},
-            {_id: "5540d784967634701b47b107", name: "Develope"},
-            {_id: "5540bf94721b2f7c1660fa8f", name: "Admin"},
-        ];
+        // var mockOptions = [
+        //     {_id: "5540bf5afea91a34148e4dcf", name: "Design"},
+        //     {_id: "5540d784967634701b47b107", name: "Develope"},
+        //     {_id: "5540bf94721b2f7c1660fa8f", name: "Admin"},
+        // ];
         var mockConfig = {
             fields: {
                 __v: {},

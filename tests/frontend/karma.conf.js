@@ -3,7 +3,7 @@
 module.exports = function(config){
   config.set({
 
-    basePath : './',
+    basePath : '../..',
 
     files : [
             'public/lib/jquery/dist/jquery.js',
@@ -12,7 +12,7 @@ module.exports = function(config){
             'public/lib/angular-ui-grid/ui-grid.js',
             'public/js/**/*.js',
             'public/lib/angular-mocks/angular-mocks.js',
-            'public/tests/**/*[Ss]pec.js',
+            'tests/frontend/specs/**/*[Ss]pec.js',
     ],
 
     autoWatch : true,

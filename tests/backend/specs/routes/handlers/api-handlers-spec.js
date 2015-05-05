@@ -1,6 +1,6 @@
 'use strict';
 
-var P = require.main.require('./tests/lib/promise-mock.js');
+var P = require.main.require('./tests/backend/lib/promise-mock.js');
 
 var apiHandlers = require.main.require('./routes/handlers/api-handlers.js');
 var pvt = apiHandlers.pvt;

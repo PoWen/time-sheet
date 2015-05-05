@@ -3,5 +3,5 @@
 var Jasmine = require('jasmine');
 
 var jsm = new Jasmine();
-jsm.loadConfigFile('./tests/support/jasmine.json');
+jsm.loadConfigFile('./tests/backend/jasmine.json');
 jsm.execute();
