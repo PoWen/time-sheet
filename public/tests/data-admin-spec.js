@@ -70,6 +70,11 @@ describe('dataAdmin module', function () {
                 }
             }
         ];
+        var mockOptions = [
+            {_id: "5540bf5afea91a34148e4dcf", name: "Design"},
+            {_id: "5540d784967634701b47b107", name: "Develope"},
+            {_id: "5540bf94721b2f7c1660fa8f", name: "Admin"},
+        ];
         var mockConfig = {
             fields: {
                 __v: {},
@@ -116,13 +121,16 @@ describe('dataAdmin module', function () {
         it('build columnDefs', function () {
             pvt.buildColumnDefs(mockResponseData.config);
 
-            var target = [
-                { name: 'name', field: 'name', displayName: '姓名'},
-                { name: 'jobTitle', field: 'jobTitle', displayName: '職稱' },
-                { name: 'department', field: 'department.name', displayName: '部門'},
-            ];
+            expect($scope.gridOptions.columnDefs).toBeDefined();
 
-            expect($scope.gridOptions.columnDefs).toEqual(target);
+            var columnDefs = $scope.gridOptions.columnDefs;
+            var columnNames = columnDefs.map(function (columnDef) {
+                return columnDef.name;
+            });
+
+            var targetSequence = [ 'name', 'jobTitle', 'department' ];
+
+            expect(columnNames).toEqual(targetSequence);
         });
 
         describe('adaptToColumnDef', function () {
@@ -145,6 +153,8 @@ describe('dataAdmin module', function () {
                         name: 'department',
                         field: 'department.name',
                         displayName: '部門',
+                        editableCellTemplate: 'ui-grid/dropdownEditor',
+                        //editDropdownOptionsArray:
                     },
                 },
             ];

@@ -36,6 +36,8 @@ dataAdmin.controller('DataCtrl',
         enableFiltering: true,
         columnDefs: [],
     };
+
+    //editDropDownOptionsArray = [{id: xxx, value: xxx}]
     
     var modelName = '';
 
@@ -86,6 +88,7 @@ dataAdmin.controller('DataCtrl',
 
         if (field.type === 'select') {
             column.field = field.key + '.name';
+            column.editableCellTemplate = 'ui-grid/dropdownEditor';
         } else {
             column.field = field.key;
         }
