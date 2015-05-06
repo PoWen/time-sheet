@@ -8,6 +8,7 @@ var pvt = apiHandlers.pvt;
 //Model for test example
 var Model = require.main.require('./tests/mocks/model-for-test.js');
 var modelName = Model.modelName;
+var testModelName = Model.modelName;
 
 var db = require.main.require('./tests/mocks/mock-db-response.json');
 
@@ -33,9 +34,6 @@ describe('json api', function () {
         return mockConfig;
     };
 
-    var getMockDocs = function () {
-        return db.docs;
-    };
     var getMockData = function () {
         return db.docs;
     };
@@ -66,72 +64,190 @@ describe('json api', function () {
             console.log(error.stack);
         }).finally(function () {
             expect(pvt.getConfig).toHaveBeenCalledWith(modelName);
-            expect(pvt.getData).toHaveBeenCalledWith(modelName, mockConfig);
+            expect(pvt.getData).toHaveBeenCalledWith(modelName);
             expect(res.json).toHaveBeenCalledWith(mockResponse);
             done();
         });
     });
 
-    describe('getData: ', function () {
-        it('getData', function (done) {
-            var mockDocs = getMockDocs();
-            var mockData = getMockData();
+    describe('getData by modelName', function () {
+        it('find all docs in model async', function (done) {
+            var docs = ['doc1', 'doc2', 'doc3'];
+            spyOn(pvt, 'findAllDocs').and.returnValue(P.resolvedWith(docs));
 
-            spyOn(pvt, 'findAllDocs').and.returnValue(P.resolvedWith(mockDocs));
-            spyOn(Model, 'populate').and.returnValue(P.resolvedWith(mockData));
-
-            var populateOpts = [{
-                path: 'department',
-                select: 'name'
-            }];
-
-            pvt.getData(modelName, getMockConfig()).then(function (responseData) {
-                expect(responseData).toEqual(mockData);
+            var responseData;
+            pvt.getData('modelName').then(function (data) {
+                responseData = data;
             }).catch(function (error) {
                 console.log(error.stack);
             }).finally(function () {
-                expect(pvt.findAllDocs).toHaveBeenCalledWith(modelName);
-                expect(Model.populate).not.toHaveBeenCalledWith(mockDocs, populateOpts);
+                expect(pvt.findAllDocs).toHaveBeenCalledWith('modelName');
+                expect(responseData).toEqual(docs);
                 done();
             });
         });
     });
 
-    describe('getConfig: model config for frontend', function () {
-        it('getConfig return config', function (done) {
-            //TODO add spec of findFieldOptoins
-            var mockOptions = getMockDepartmentOptions();
-            spyOn(pvt, 'getOptions').and.returnValue(P.resolvedWith(mockOptions));
+    describe('getConfig by modelName', function () {
+        var inputModelName;
+        var fakeFieldSettingMap;
+        var fakeInitConfig;
+        var fakeConfig;
+        beforeEach(function () {
+            inputModelName = 'modelName';
+            fakeFieldSettingMap = {
+                name: 'text field setting',
+                gender: 'select field setting without options',
+            };
+            fakeInitConfig = {
+                model: inputModelName,
+                fields: fakeFieldSettingMap,
+            };
+            fakeConfig = {
+                model: 'modelName',
+                fields: {
+                    name: 'text field setting',
+                    gender: 'select field setting with options',
+                },
+            };
+        });
 
-            pvt.getConfig(modelName).then(function (config) {
-                expect(config).toEqual(getMockConfig());
+        it('init a config and populate options if need', function (done) {
+            spyOn(pvt, 'initConfig').and.returnValue(fakeInitConfig);
+            spyOn(pvt, 'populateConfigOptions').and.returnValue(P.resolvedWith(fakeConfig));
+
+            var responseConfig;
+            pvt.getConfig(inputModelName).then(function (config) {
+                responseConfig = config;
             }).catch(function (error) {
                 console.log(error.stack);
             }).finally(function () {
-                expect(pvt.getOptions).toHaveBeenCalledWith('departments');
+                expect(pvt.initConfig).toHaveBeenCalledWith(inputModelName);
+                expect(pvt.populateConfigOptions).toHaveBeenCalledWith(fakeInitConfig);
+                expect(responseConfig).toEqual(fakeConfig);
                 done();
             });
         });
 
-        it('getSelectFields', function () {
-            var fieldSettingMap = pvt.getModelFieldSettingMap(modelName);
-            var selectFields = pvt.getSelectFields(fieldSettingMap);
+        describe('initConfig', function () {
+            it('build init config with ModelName and fieldSettingMap', function () {
+                var initConfig = pvt.initConfig(testModelName);
 
-            var target = [ 'department' ];
-            expect(selectFields).toEqual(target);
+                var settingMap = Model.getFieldSettingMap();
+                expect(initConfig.model).toEqual(testModelName);
+                expect(initConfig.fields).toEqual(settingMap);
+            });
         });
 
-        it('getFieldRef', function () {
-            var refField = 'department';
-            var refModelName = pvt.getFieldRef(modelName, refField);
+        describe('populateConfigOptions', function () {
+            var resolvedConfig;
+            beforeEach(function (done) {
+                spyOn(pvt, 'filterSelectFields').and.returnValue(['department', 'gender']);
+                spyOn(pvt, 'populateFieldOptions').and.returnValue(P.resolvedWith());
 
-            var target = 'departments';
-            expect(refModelName).toEqual(target);
+                pvt.populateConfigOptions(fakeInitConfig).then(function (config) {
+                    resolvedConfig = config;
+                }).catch(function (error) {
+                    console.log(error.stack);
+                }).finally(function () {
+                    done();
+                });
+            });
+
+            it('filter fields those need options', function () {
+                expect(pvt.filterSelectFields).toHaveBeenCalledWith(fakeInitConfig.fields);
+            });
+            it('populate options for each select field', function () {
+                expect(pvt.populateFieldOptions.calls.count()).toBe(2);
+            });
+            it('resolve the input config with options', function () {
+                expect(resolvedConfig).toBe(fakeInitConfig);
+            });
         });
 
-        it('getModelFieldSettingMap return', function () {
-            var setting = pvt.getModelFieldSettingMap(modelName);
-            expect(setting).toEqual(getMockModelFieldsSetting());
+        describe('filterSelectFields', function () {
+            var specs = [
+                {
+                    name: 'no select field',
+                    fieldSettings: {
+                        name: { key: 'name'},
+                    },
+                    selectFields: [],
+                },
+                {
+                    name: 'one select field',
+                    fieldSettings: {
+                        name: { key: 'name'},
+                        department: { key: 'department', type: 'select'},
+                    },
+                    selectFields: ['department'],
+                },
+                {
+                    name: 'many select field',
+                    fieldSettings: {
+                        name: { key: 'name'},
+                        gender: { key: 'gender', type: 'select'},
+                        department: { key: 'department', type: 'select'},
+                    },
+                    selectFields: ['department', 'gender'],
+                },
+            ];
+            specs.forEach(function (spec) {
+                it('return an array of fieldNames type is select: ' + spec.name , function () {
+                    var selectFields = pvt.filterSelectFields(spec.fieldSettings);
+
+                    spec.selectFields.forEach(function (fieldName) {
+                        expect(selectFields.indexOf(fieldName)).not.toBe(-1);
+                    });
+                });
+            });
+        });
+
+        describe('populateFieldOptions', function () {
+            var fieldSetting, modelName;
+            beforeEach(function (done) {
+                fieldSetting = { key: 'department', type: 'select'};
+                modelName = inputModelName;
+                spyOn(pvt, 'getOptionModelName').and.returnValue('optionModelName');
+                spyOn(pvt, 'getOptions').and.returnValue(P.resolvedWith(db.departmentOptions));
+
+                pvt.populateFieldOptions(fieldSetting, modelName).catch(function (error) {
+                    console.log(error.stack);
+                }).finally(function () {
+                    done();
+                });
+            });
+
+            it('getOptionModelName first', function () {
+                expect(pvt.getOptionModelName).toHaveBeenCalledWith(fieldSetting.key, modelName);
+            });
+
+            it('fieldSetting has options after populate options', function () {
+                var selectSpec = '_id name';
+                expect(pvt.getOptions).toHaveBeenCalledWith('optionModelName', selectSpec);
+                expect(fieldSetting.options).toBeDefined();
+                expect(fieldSetting.options).toEqual(db.departmentOptions);
+            });
+        });
+
+        describe('getOptionModelName', function () {
+            var specs = [
+                {
+                    name: 'department',
+                    fieldName: 'department',
+                    optionModelName: 'departments',
+                }, {
+                    name: 'gender',
+                    fieldName: 'gender',
+                    optionModelName: 'genders',
+                },
+            ];
+            specs.forEach(function (spec) {
+                it('options of ' + spec.fieldName + ' ref to ' + spec.optionModelName, function () {
+                    var optionModelName = pvt.getOptionModelName(spec.fieldName, testModelName);
+                    expect(optionModelName).toBe(spec.optionModelName);
+                });
+            });
         });
     });
 

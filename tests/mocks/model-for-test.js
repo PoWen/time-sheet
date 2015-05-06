@@ -8,7 +8,8 @@ var fieldsSettingPlugin = require.main.require('./models/fields-setting-plugin.j
 var schema = Schema({
     name: String,
     jobTitle: String,
-    department: { type: Schema.Types.ObjectId, ref: 'departments' }
+    department: { type: Schema.Types.ObjectId, ref: 'departments' },
+    gender: { type: Schema.Types.ObjectId, ref: 'genders' },
 });
 
 var createSetting = function (name, col, type) {
@@ -28,5 +29,7 @@ var settingMap = {
 schema.plugin(fieldsSettingPlugin, settingMap);
 
 var Member = mongoose.model('members', schema);
+
+Member.buildFieldSettingMap();
 
 module.exports = Member;

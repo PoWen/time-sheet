@@ -25,4 +25,6 @@ schema.plugin(fieldsSettingPlugin, settingMap);
 
 var Department = mongoose.model('departments', schema);
 
+Department.buildFieldSettingMap();
+
 module.exports = Department;

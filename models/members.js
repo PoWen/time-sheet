@@ -29,4 +29,6 @@ schema.plugin(fieldsSettingPlugin, settingMap);
 
 var Member = mongoose.model('members', schema);
 
+Member.buildFieldSettingMap();
+
 module.exports = Member;
