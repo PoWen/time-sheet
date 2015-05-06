@@ -35,15 +35,8 @@ var getConfig = function (modelName) {
     return pvt.findFieldOptions(config);
 };
 pvt.getConfig = getConfig;
-var getData = function (modelName, config) {
-    return pvt.findAllDocs(modelName).then(function (docs) {
-        var Model = mongoose.model(modelName);
-
-        var selectFields = pvt.getSelectFields(config.fields);
-        var opts = pvt.getPopulateOptions(selectFields);
-
-        return Model.populate(docs, opts);
-    });
+var getData = function (modelName) {
+    return pvt.findAllDocs(modelName);
 };
 pvt.getData = getData;
 

@@ -21,6 +21,12 @@ dataAdmin.factory('starter', [function(){
     return that;
 }]);
 
+dataAdmin.filter('options', [function () {
+    return function (input, options) {
+        return options[input];
+    };
+}]);
+
 dataAdmin.controller('DataCtrl',
         ['$scope', '$http', '$window', '$timeout', 'uiGridConstants', 'starter',
         function ($scope, $http, $window, $timeout, uiGridConstants, starter) {
@@ -37,8 +43,6 @@ dataAdmin.controller('DataCtrl',
         columnDefs: [],
     };
 
-    //editDropDownOptionsArray = [{id: xxx, value: xxx}]
-    
     var modelName = '';
 
     pvt.init = function () {
@@ -79,6 +83,8 @@ dataAdmin.controller('DataCtrl',
         $scope.gridOptions.columnDefs = columns;
     };
 
+    $scope.fieldOptions = {};
+
     pvt.adaptToColumnDef = function (field) {
         if (!isVisible(field)) return null;
 
@@ -87,13 +93,30 @@ dataAdmin.controller('DataCtrl',
         column.displayName = field.name;
 
         if (field.type === 'select') {
-            column.field = field.key + '.name';
+            column.field = field.key;
             column.editableCellTemplate = 'ui-grid/dropdownEditor';
+            column.editDropdownOptionsArray = pvt.adaptToDropdownOptions(field.options);
+            $scope.fieldOptions[field.key] = pvt.converToOptionMap(field.options);
+            column.cellFilter = 'options:grid.appScope.fieldOptions.' + field.key;
         } else {
             column.field = field.key;
         }
 
         return column;
+    };
+    pvt.adaptToDropdownOptions = function (fieldOptions) {
+        return fieldOptions.map(function (option) {
+            return {
+                id: option._id,
+                value: option.name,
+            };
+        });
+    };
+    pvt.converToOptionMap = function (fieldOptions) {
+        return fieldOptions.reduce(function (prev, current) {
+            prev[current._id] = current.name;
+            return prev;
+        }, { });
     };
 
     var isVisible = function (field) {
@@ -129,27 +152,6 @@ dataAdmin.controller('DataCtrl',
 
         $scope.gridApi.rowEdit.setSavePromise( doc, promise );
     };
-
-    $scope.$watch('gridOptions.columnDefs', function (newValue, oldValue) {
-        //for hide _id field
-        if (newValue === oldValue) return;
-
-        $scope.gridOptions.columnDefs.forEach(function (col) {
-            if (col.name === '_id') {
-                col.visible = false;
-            }
-        });
-        $scope.gridApi.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
-
-        // another way to do it
-        // var idIndex;
-        // $scope.gridOptions.columnDefs.forEach(function (col, index) {
-        //     if (col.name === '_id') {
-        //         idIndex = index;
-        //     }
-        // });
-        // $scope.gridOptions.columnDefs.splice(idIndex, 1);
-    });
 
     starter.init();
 }]);

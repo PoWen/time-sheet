@@ -1,6 +1,9 @@
 'use strict';
 
-/* global inject */
+/* global angular */
+
+var inject = angular.mock.inject;
+//var module = angular.mock.module;
 
 describe('dataAdmin module', function () {
     beforeEach(module('backendMock'));
@@ -75,16 +78,26 @@ describe('dataAdmin module', function () {
                 }
             }
         ];
-        // var mockOptions = [
-        //     {_id: "5540bf5afea91a34148e4dcf", name: "Design"},
-        //     {_id: "5540d784967634701b47b107", name: "Develope"},
-        //     {_id: "5540bf94721b2f7c1660fa8f", name: "Admin"},
-        // ];
         var mockConfig = {
             fields: {
                 __v: {},
                 _id: {},
-                department: {key: 'department', name: '部門', col: 2, type: 'select'},
+                department: {
+                    key: 'department',
+                    name: '部門',
+                    col: 2,
+                    type: 'select',
+                    options: [{
+                        "_id": "101",
+                        "name": "Design"
+                    }, {
+                        "_id": "102",
+                        "name": "Develope"
+                    }, {
+                        "_id": "103",
+                        "name": "Admin"
+                    }],
+                },
                 name: {key: 'name', name: '姓名', col: 0 },
                 jobTitle: {key: 'jobTitle', name: '職稱', col: 1 },
             },
@@ -153,13 +166,33 @@ describe('dataAdmin module', function () {
                     },
                 },
                 {
-                    field: { key: 'department', name: '部門', col: 2, type: 'select' },
+                field: {
+                    key: 'department',
+                    name: '部門',
+                    col: 2,
+                    type: 'select',
+                    options: [{
+                        "_id": "101",
+                        "name": "Design"
+                    }, {
+                        "_id": "102",
+                        "name": "Develope"
+                    }, {
+                        "_id": "103",
+                        "name": "Admin"
+                    }],
+                },
                     target: { 
                         name: 'department',
-                        field: 'department.name',
+                        field: 'department',
                         displayName: '部門',
                         editableCellTemplate: 'ui-grid/dropdownEditor',
-                        //editDropdownOptionsArray:
+                        editDropdownOptionsArray: [
+                            { id: "101", value: 'Design'},
+                            { id: "102", value: 'Develope'},
+                            { id: "103", value: 'Admin'},
+                        ],
+                        cellFilter: 'options:grid.appScope.fieldOptions.department',
                     },
                 },
             ];

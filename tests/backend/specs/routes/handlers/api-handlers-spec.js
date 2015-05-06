@@ -37,7 +37,7 @@ describe('json api', function () {
         return db.docs;
     };
     var getMockData = function () {
-        return db.docsAfterPopulate;
+        return db.docs;
     };
 
     beforeEach(function () {
@@ -91,7 +91,7 @@ describe('json api', function () {
                 console.log(error.stack);
             }).finally(function () {
                 expect(pvt.findAllDocs).toHaveBeenCalledWith(modelName);
-                expect(Model.populate).toHaveBeenCalledWith(mockDocs, populateOpts);
+                expect(Model.populate).not.toHaveBeenCalledWith(mockDocs, populateOpts);
                 done();
             });
         });
