@@ -4,7 +4,7 @@ var clone = function (obj) {
     return JSON.parse(JSON.stringify(obj));
 };
 
-var fieldAttrsPlugin = function (schema, options) {
+module.exports = function (schema, options) {
     var fields = options || { };
 
     var key;
@@ -12,20 +12,22 @@ var fieldAttrsPlugin = function (schema, options) {
         fields[key].key = key;
     }
 
+    var getFieldSettingMap = function () {
+        return clone(fields);
+    };
+    schema.static('getFieldSettingMap', getFieldSettingMap);
+
     var hasField = function (field) {
         return fields[field] !== undefined;
     };
-
-    var getFieldAttrs = function (field) {
+    var getFieldSetting = function (fieldName) {
         var result = null;
-        if (hasField(field)) {
-            result = fields[field];
-        } else if (field === undefined) {
-            result = fields;
+        if (hasField(fieldName)) {
+            result = fields[fieldName];
         }
         return clone(result);
     };
-    schema.static('getFieldAttrs', getFieldAttrs);
+    schema.static('getFieldSetting', getFieldSetting);
 
     var getName = function (field) {
         var result = null;
@@ -45,5 +47,3 @@ var fieldAttrsPlugin = function (schema, options) {
     };
     schema.static('getAttr', getAttr);
 };
-
-module.exports = fieldAttrsPlugin;

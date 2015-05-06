@@ -1,12 +1,12 @@
 'use strict';
 
-var fieldAttrsPlugin = require.main.require('./models/field-attrs-plugin.js');
+var fieldsSettingPlugin = require.main.require('./models/fields-setting-plugin.js');
 
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-describe('fieldAttrsPlugin', function () {
-    var schema, attrs, Model;
+describe('fieldsSettingPlugin', function () {
+    var schema, settingMap, Model;
     beforeAll(function () {
         schema = Schema({
             name: String,
@@ -17,7 +17,7 @@ describe('fieldAttrsPlugin', function () {
             }
         });
 
-        var createAttr = function (name, col, type) {
+        var createSetting = function (name, col, type) {
             return {
                 name: name,
                 col: col,
@@ -25,23 +25,23 @@ describe('fieldAttrsPlugin', function () {
             };
         };
 
-        attrs = {
-            name: createAttr('姓名', 0),
-            jobTitle: createAttr('職稱', 1),
-            department: createAttr('部門', 2, 'select'),
+        settingMap = {
+            name: createSetting('姓名', 0),
+            jobTitle: createSetting('職稱', 1),
+            department: createSetting('部門', 2, 'select'),
         };
 
-        schema.plugin(fieldAttrsPlugin, attrs);
+        schema.plugin(fieldsSettingPlugin, settingMap);
         Model = mongoose.model('model', schema);
     });
 
-    it('should add add some property', function () {
-        var jobTitleAttrs = Model.getFieldAttrs('jobTitle');
-        expect(jobTitleAttrs.name).toBe('職稱');
+    it('should add some property', function () {
+        var jobTitleSetting = Model.getFieldSetting('jobTitle');
+        expect(jobTitleSetting.name).toBe('職稱');
     });
-    it('should add add key property', function () {
-        var jobTitleAttrs = Model.getFieldAttrs('jobTitle');
-        expect(jobTitleAttrs.key).toBeDefined();
-        expect(jobTitleAttrs.key).toBe('jobTitle');
+    it('should add key property', function () {
+        var jobTitleSetting = Model.getFieldSetting('jobTitle');
+        expect(jobTitleSetting.key).toBeDefined();
+        expect(jobTitleSetting.key).toBe('jobTitle');
     });
 });

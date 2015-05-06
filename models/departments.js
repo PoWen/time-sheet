@@ -3,13 +3,13 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var fieldAttrsPlugin = require.main.require('./models/field-attrs-plugin.js');
+var fieldsSettingPlugin = require.main.require('./models/fields-setting-plugin.js');
 
 var schema = Schema({
     name: String,
 });
 
-var createAttr = function (name, col, type) {
+var creaeSetting = function (name, col, type) {
     return {
         name: name,
         col: col,
@@ -17,11 +17,11 @@ var createAttr = function (name, col, type) {
     };
 };
 
-var attrs = {
-    name: createAttr('部門名稱', 0),
+var settingMap = {
+    name: creaeSetting('部門名稱', 0),
 };
 
-schema.plugin(fieldAttrsPlugin, attrs);
+schema.plugin(fieldsSettingPlugin, settingMap);
 
 var Department = mongoose.model('departments', schema);
 

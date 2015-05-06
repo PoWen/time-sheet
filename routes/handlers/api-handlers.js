@@ -27,23 +27,47 @@ apiHandlers.responseJsonConfigAndData = function (req, res) {
 var getConfig = function (modelName) {
     var config = { };
 
-    var fieldAttrs = pvt.getFieldAttrs(modelName);
+    var settingMap = pvt.getModelFieldSettingMap(modelName);
 
     config.model = modelName;
-    config.fields = fieldAttrs;
+    config.fields = settingMap;
 
-    return findSelectOptions(config);
+    return pvt.findFieldOptions(config);
 };
 pvt.getConfig = getConfig;
+var getData = function (modelName, config) {
+    return pvt.findAllDocs(modelName).then(function (docs) {
+        var Model = mongoose.model(modelName);
 
-var findSelectOptions = function (config) {
+        var selectFields = pvt.getSelectFields(config.fields);
+        var opts = pvt.getPopulateOptions(selectFields);
+
+        return Model.populate(docs, opts);
+    });
+};
+pvt.getData = getData;
+
+
+var getModelFieldSettingMap = function (modelName) {
+    var Model = mongoose.model(modelName);
+
+    var result = { };
+    Model.schema.eachPath(function (fieldName) {
+        var fieldSetting = Model.getFieldSetting(fieldName);
+        result[fieldName] = fieldSetting ? fieldSetting : { };
+    });
+
+    return result;
+};
+pvt.getModelFieldSettingMap = getModelFieldSettingMap;
+var findFieldOptions = function (config) {
     var deferred = Q.defer();
 
-    var selectFields = getSelectFields(config.fields);
+    var selectFields = pvt.getSelectFields(config.fields);
 
     var promiseArr = [];
     selectFields.forEach(function (field) {
-        var refModelName = getRefModelName(config.model, field);
+        var refModelName = pvt.getFieldRef(config.model, field);
         var promise = pvt.getOptions(refModelName).then(function (options) {
             config.fields[field].options = options;
         });
@@ -56,6 +80,8 @@ var findSelectOptions = function (config) {
 
     return deferred.promise;
 };
+pvt.findFieldOptions = findFieldOptions;
+
 
 var getSelectFields = function (fieldAttrs) {
     var result = [];
@@ -70,15 +96,13 @@ var getSelectFields = function (fieldAttrs) {
     return result;
 };
 pvt.getSelectFields = getSelectFields;
-
-var getRefModelName = function (modelName, pathName) {
+var getFieldRef = function (modelName, pathName) {
     var schema = mongoose.model(modelName).schema;
     var schemaType = schema.path(pathName);
 
     return schemaType.options.ref;
 };
-pvt.getRefModelName = getRefModelName;
-
+pvt.getFieldRef = getFieldRef;
 var getOptions = function (modelName) {
     var Options = mongoose.model(modelName);
     var optionsQuery = Options.find().select('_id name');
@@ -89,37 +113,25 @@ var getOptions = function (modelName) {
 };
 pvt.getOptions = getOptions;
 
-var getFieldAttrs = function (modelName) {
-    var Model = dbManager.getModel(modelName);
-
-    var result = { };
-    Model.schema.eachPath(function (pathName) {
-        var fieldAttrs = Model.getFieldAttrs(pathName);
-        result[pathName] = fieldAttrs ? fieldAttrs : { };
-    });
-
-    return result;
-};
-pvt.getFieldAttrs = getFieldAttrs;
-
-var getData = function (modelName) {
-    return pvt.findAllDocs(modelName).then(function (docs) {
-        var Model = mongoose.model(modelName);
-        var opts = {
-            path: 'department',
-            select: 'name'
-        };
-        return Model.populate(docs, opts);
-    });
-};
-pvt.getData = getData;
-
 var findAllDocs = function (modelName) {
     var Model = mongoose.model(modelName);
     var promise = Model.find().exec();
     return promise;
 };
 pvt.findAllDocs = findAllDocs;
+
+var getPopulateOptions = function (selectFields) {
+    var options = selectFields.map(function (fieldName) {
+        return {
+            path: fieldName,
+            select: 'name',
+        };
+    });
+
+    return options;
+};
+pvt.getPopulateOptions = getPopulateOptions;
+
 
 apiHandlers.saveJsonDocs = function (req, res) {
     var toSaveDoc = req.body;

@@ -6,12 +6,40 @@ var apiHandlers = require.main.require('./routes/handlers/api-handlers.js');
 var pvt = apiHandlers.pvt;
 
 //Model for test example
-var Model = require.main.require('./models/members.js');
+var Model = require.main.require('./tests/data-mocks/model-for-test.js');
 var modelName = Model.modelName;
 
+var db = require.main.require('./tests/data-mocks/mock-db-response.json');
+
 describe('json api', function () {
-    //console.log('helper', helper);
     var req, res;
+
+    var getMockModelFieldsSetting = function () {
+        var fieldSettingMap = Model.getFieldSettingMap();
+        fieldSettingMap._id = { };
+        fieldSettingMap.__v = { };
+        return fieldSettingMap;
+    };
+    var getMockDepartmentOptions = function () {
+        return db.departmentOptions;
+    };
+    var getMockConfig = function () {
+        var fieldsSetting = getMockModelFieldsSetting();
+        fieldsSetting.department.options = getMockDepartmentOptions();
+        var mockConfig = {
+            model: modelName,
+            fields: fieldsSetting,
+        };
+        return mockConfig;
+    };
+
+    var getMockDocs = function () {
+        return db.docs;
+    };
+    var getMockData = function () {
+        return db.docsAfterPopulate;
+    };
+
     beforeEach(function () {
         req = {};
         req.params = {
@@ -23,138 +51,87 @@ describe('json api', function () {
     });
 
     it('responseJsonConfigAndData', function (done) {
-        var mockDocs = [{ name: 'Charles' }, { name: 'Steven'}];
-        var mockConfig = { name: { name: '姓名' } };
-
-        var target = {
+        var mockData = getMockData();
+        var mockConfig = getMockConfig();
+        var mockResponse = {
             config: mockConfig,
-            data: mockDocs,
+            data: mockData,
         };
 
-        spyOn(pvt, 'getConfig').and.callFake(P.resolve(mockConfig));
-        spyOn(pvt, 'getData').and.callFake(P.resolve(mockDocs));
+        spyOn(pvt, 'getConfig').and.returnValue(P.resolvedWith(mockConfig));
+        spyOn(pvt, 'getData').and.returnValue(P.resolvedWith(mockData));
         spyOn(res, 'json');
 
-        apiHandlers.responseJsonConfigAndData(req, res).then(function () {
+        apiHandlers.responseJsonConfigAndData(req, res).catch(function (error) {
+            console.log(error.stack);
+        }).finally(function () {
             expect(pvt.getConfig).toHaveBeenCalledWith(modelName);
             expect(pvt.getData).toHaveBeenCalledWith(modelName, mockConfig);
-            expect(res.json).toHaveBeenCalledWith(target);
+            expect(res.json).toHaveBeenCalledWith(mockResponse);
             done();
         });
     });
 
-    describe('get model data', function () {
+    describe('getData: ', function () {
         it('getData', function (done) {
-            var mockDocs = [
-                {
-                    "_id": "5542437cf79f7879d4048581",
-                    "name": "Charles",
-                    "jobTitle": "CEO",
-                    "department": "5540bf94721b2f7c1660fa8f"
-                }, {
-                    "_id": "5542437cf79f7879d4048582",
-                    "name": "Ernie",
-                    "jobTitle": "CTO"
-                }, {
-                    "_id": "5542437cf79f7879d4048583",
-                    "name": "Steven",
-                    "jobTitle": "Staff",
-                    "department": "5540d784967634701b47b107"
-                }
-            ];
+            var mockDocs = getMockDocs();
+            var mockData = getMockData();
 
-            var mockData = [
-                {
-                    "_id": "5542437cf79f7879d4048581",
-                    "name": "Charles",
-                    "jobTitle": "CEO",
-                    "department": {
-                        "_id": "5540bf94721b2f7c1660fa8f",
-                        "name": "Admin"
-                    }
-                }, {
-                    "department": null,
-                    "_id": "5542437cf79f7879d4048582",
-                    "name": "Ernie",
-                    "jobTitle": "CTO"
-                }, {
-                    "_id": "5542437cf79f7879d4048583",
-                    "name": "Steven",
-                    "jobTitle": "Staff",
-                    "department": {
-                        "_id": "5540d784967634701b47b107",
-                        "name": "Develope"
-                    }
-                }
-            ];
+            spyOn(pvt, 'findAllDocs').and.returnValue(P.resolvedWith(mockDocs));
+            spyOn(Model, 'populate').and.returnValue(P.resolvedWith(mockData));
 
-            spyOn(pvt, 'findAllDocs').and.callFake(P.resolve(mockDocs));
-            spyOn(Model, 'populate').and.callFake(P.resolve(mockData));
+            var populateOpts = [{
+                path: 'department',
+                select: 'name'
+            }];
 
-            var target = mockData;
-
-            pvt.getData(modelName).then(function (data) {
-                expect(data).toEqual(target);
+            pvt.getData(modelName, getMockConfig()).then(function (responseData) {
+                expect(responseData).toEqual(mockData);
+            }).catch(function (error) {
+                console.log(error.stack);
+            }).finally(function () {
+                expect(pvt.findAllDocs).toHaveBeenCalledWith(modelName);
+                expect(Model.populate).toHaveBeenCalledWith(mockDocs, populateOpts);
                 done();
             });
         });
     });
 
-    describe('get model config for front-end', function () {
+    describe('getConfig: model config for frontend', function () {
         it('getConfig return config', function (done) {
-            var mockOptions = [
-                    {_id: "5540bf5afea91a34148e4dcf", name: "Design"},
-                    {_id: "5540d784967634701b47b107", name: "Develope"},
-                    {_id: "5540bf94721b2f7c1660fa8f", name: "Admin"},
-            ];
-
-            spyOn(pvt, 'getOptions').and.callFake(P.resolve(mockOptions));
-
-            var fieldAttrs = Model.getFieldAttrs();
-            fieldAttrs._id = { };
-            fieldAttrs.__v = { };
-            fieldAttrs.department.options = mockOptions;
-
-            var target = {
-                model: modelName,
-                fields: fieldAttrs,
-            };
+            //TODO add spec of findFieldOptoins
+            var mockOptions = getMockDepartmentOptions();
+            spyOn(pvt, 'getOptions').and.returnValue(P.resolvedWith(mockOptions));
 
             pvt.getConfig(modelName).then(function (config) {
-                expect(config).toEqual(target);
+                expect(config).toEqual(getMockConfig());
+            }).catch(function (error) {
+                console.log(error.stack);
+            }).finally(function () {
+                expect(pvt.getOptions).toHaveBeenCalledWith('departments');
                 done();
             });
         });
 
         it('getSelectFields', function () {
-            var attrs = pvt.getFieldAttrs(modelName);
-            var selectFields = pvt.getSelectFields(attrs);
+            var fieldSettingMap = pvt.getModelFieldSettingMap(modelName);
+            var selectFields = pvt.getSelectFields(fieldSettingMap);
 
             var target = [ 'department' ];
-
             expect(selectFields).toEqual(target);
         });
 
-        it('getRefModelName', function () {
-            var field = 'department';
-
-            var refModelName = pvt.getRefModelName(modelName, field);
+        it('getFieldRef', function () {
+            var refField = 'department';
+            var refModelName = pvt.getFieldRef(modelName, refField);
 
             var target = 'departments';
-
             expect(refModelName).toEqual(target);
         });
 
-        it('getFieldAttrs return', function () {
-            var attrs = pvt.getFieldAttrs(modelName);
-
-            var fieldAttrs = Model.getFieldAttrs();
-            fieldAttrs._id = { };
-            fieldAttrs.__v = { };
-
-            var target = fieldAttrs;
-
-            expect(attrs).toEqual(target);
+        it('getModelFieldSettingMap return', function () {
+            var setting = pvt.getModelFieldSettingMap(modelName);
+            expect(setting).toEqual(getMockModelFieldsSetting());
         });
     });
 
@@ -170,7 +147,7 @@ describe('json api', function () {
                 expect(resContent.data).toBe(createdDoc);
             };
 
-            spyOn(pvt, 'createDoc').and.callFake(P.resolve(createdDoc));
+            spyOn(pvt, 'createDoc').and.returnValue(P.resolvedWith(createdDoc));
             spyOn(res, 'json');
 
             apiHandlers.saveJsonDocs(req, res).then(function () {
@@ -190,7 +167,7 @@ describe('json api', function () {
                 expect(resContent.data).toBe(updatedDoc);
             };
 
-            spyOn(pvt, 'updateDoc').and.callFake(P.resolve(updatedDoc));
+            spyOn(pvt, 'updateDoc').and.returnValue(P.resolvedWith(updatedDoc));
             spyOn(res, 'json');
 
             apiHandlers.saveJsonDocs(req, res).then(function () {
