@@ -3,20 +3,25 @@
 /* global inject */
 
 describe('dataAdmin module', function () {
+    beforeEach(module('backendMock'));
     beforeEach(module('dataAdmin'));
 
-    var $injector, $scope, $window;
+    var $injector, $scope;
+    var backendMock;
     var pvt;
 
     beforeEach(inject(function (_$injector_) {
         $injector = _$injector_;
+
+        backendMock = $injector.get('backendMock');
 
         var $controller = $injector.get('$controller');
 
         var $rootScope = $injector.get('$rootScope');
         $scope = $rootScope.$new();
 
-        $window = { };
+         //window.location is readonly, so create a empty one
+        var $window = { };
         $window.location = { };
         $window.location.pathname = '/data/members';
 

@@ -6,10 +6,10 @@ var apiHandlers = require.main.require('./routes/handlers/api-handlers.js');
 var pvt = apiHandlers.pvt;
 
 //Model for test example
-var Model = require.main.require('./tests/data-mocks/model-for-test.js');
+var Model = require.main.require('./tests/mocks/model-for-test.js');
 var modelName = Model.modelName;
 
-var db = require.main.require('./tests/data-mocks/mock-db-response.json');
+var db = require.main.require('./tests/mocks/mock-db-response.json');
 
 describe('json api', function () {
     var req, res;
