@@ -51,9 +51,11 @@ app.use(function (err, req, res) {
     res.render('500');
 });
 
-app.listen(app.get('port'), function () {
-    console.log('Expres started on http://localhost:' + app.get('port'));
-    console.log('press Ctrl-C to terminate.');
-});
+if (require.main === module) {
+    app.listen(app.get('port'), function () {
+        console.log('Express started on http://localhost:' + app.get('port'));
+        console.log('press Ctrl-C to terminate.');
+    });
+}
 
 module.exports = app;

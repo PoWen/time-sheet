@@ -5,18 +5,19 @@ var router = express.Router();
 
 var dbManager = require.main.require('./lib/db-manager.js');
 
-router.get('/run', function (req, res) {
-    var clone = function (a) {
-        return JSON.parse(JSON.stringify(a));
-    };
+/* exported clone */
+var clone = function (a) {
+    return JSON.parse(JSON.stringify(a));
+};
 
+router.get('/run', function (req, res) {
     var Member = dbManager.getDbModel('members');
     var Department = dbManager.getDbModel('departments');
 
     var adminQuery = Department.findOne({ name: 'Admin' });
     var developeQuery = Department.findOne({ name: 'Develope' });
     var charlesQuery = Member.findOne({ name: 'Charles' });
-    var jeffQuery = Member.findOne({ name: 'Jeff' });
+    var jeffQuery = Member.findOne({ name: 'Steven' });
 
     var admin, develope, charles, jeff;
     var result = [];
@@ -36,48 +37,48 @@ router.get('/run', function (req, res) {
         jeff = doc;
         jeff.department = develope._id;
         return jeff.save();
-    }).then(function () {
-        result.push(clone(charles));
-        result.push(clone(jeff));
+    // }).then(function () {
+    //     result.push(clone(charles));
+    //     result.push(clone(jeff));
 
-        var opts = {
-            path: 'department',
-            select: 'name'
-        };
+    //     var opts = {
+    //         path: 'department',
+    //         select: 'name'
+    //     };
 
-        return charles.populate(opts).execPopulate();
-    }).then(function () {
-        result.push(charles);
+    //     return charles.populate(opts).execPopulate();
+    // }).then(function () {
+    //     result.push(charles);
 
-        admin.members = [];
-        admin.members.push(charles);
-        admin.members.push(jeff);
-        return admin.save();
-    }).then(function () {
-        result.push(clone(admin));
-        var opts = {
-            path: 'members',
-            select: 'name'
-        };
-        return admin.populate(opts).execPopulate();
-    }).then(function () {
-        result.push(clone(admin));
-        result.push(admin.members[0].name);
-        admin.members[0].name = 'isaddo';
-        result.push(admin.members[0].name);
-        return admin.save();
-    }).then(function () {
-        result.push(admin);
-        return jeff.populate('department').execPopulate();
-    }).then(function () {
-        result.push(jeff);
+    //     admin.members = [];
+    //     admin.members.push(charles);
+    //     admin.members.push(jeff);
+    //     return admin.save();
+    // }).then(function () {
+    //     result.push(clone(admin));
+    //     var opts = {
+    //         path: 'members',
+    //         select: 'name'
+    //     };
+    //     return admin.populate(opts).execPopulate();
+    // }).then(function () {
+    //     result.push(clone(admin));
+    //     result.push(admin.members[0].name);
+    //     admin.members[0].name = 'isaddo';
+    //     result.push(admin.members[0].name);
+    //     return admin.save();
+    // }).then(function () {
+    //     result.push(admin);
+    //     return jeff.populate('department').execPopulate();
+    // }).then(function () {
+    //     result.push(jeff);
 
-        var memberSchema = Department.schema;
-        result.push(memberSchema);
-        memberSchema.eachPath(function (pathName) {
-            var path = memberSchema.path(pathName);
-            result.push([path.path, Department.getName(pathName), path.instance === 'ObjectID']);
-        });
+    //     var memberSchema = Department.schema;
+    //     result.push(memberSchema);
+    //     memberSchema.eachPath(function (pathName) {
+    //         var path = memberSchema.path(pathName);
+    //         result.push([path.path, Department.getName(pathName), path.instance === 'ObjectID']);
+    //     });
     });
 
     promise.then(function () {

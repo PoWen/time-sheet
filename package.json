@@ -5,9 +5,9 @@
   "main": "timesheet.js",
   "scripts": {
     "start": "node timesheet.js",
-    "test": "karma start karma.conf.js",
-    "test-once": "karma start karma.conf.js --single-run",
-    "e2e": "protractor e2e-tests/protractor.conf.js",
+    "test": "karma start tests/frontend/karma.conf.js",
+    "test-once": "karma start tests/frontend/karma.conf.js --single-run",
+    "e2e": "protractor tests/e2e/protractor.conf.js",
     "db": "mongod --dbpath=data/db",
     "resetdata": "mongoimport -d timesheet -c members --type csv --headerline --file tests/data/members.csv --drop",
     "install": "node node_modules/protractor/bin/webdriver-manager update"
@@ -41,6 +41,7 @@
     "karma": "^0.12.31",
     "karma-chrome-launcher": "^0.1.8",
     "karma-jasmine": "^0.3.5",
+    "karma-ng-html2js-preprocessor": "^0.1.2",
     "karma-phantomjs-launcher": "^0.1.4",
     "protractor": "^2.0.0",
     "sendevent": "^1.0.4",

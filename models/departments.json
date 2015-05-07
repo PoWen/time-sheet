@@ -1,0 +1,12 @@
+{
+    "name": "departments",
+    "schema": {
+        "name": {
+            "schemaType": "String",
+            "setting": {
+                "name": "部門名稱",
+                "col": 0
+            }
+        }
+    }
+}

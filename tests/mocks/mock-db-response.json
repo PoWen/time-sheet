@@ -1,0 +1,62 @@
+{
+    "docs": [{
+        "_id": "001",
+        "name": "Charles",
+        "jobTitle": "CEO",
+        "department": "103"
+    }, {
+        "_id": "002",
+        "name": "Ernie",
+        "jobTitle": "CTO"
+    }, {
+        "_id": "003",
+        "name": "Steven",
+        "jobTitle": "Staff",
+        "department": "102"
+    }],
+
+    "departments": [{
+        "_id": "101",
+        "name": "Design"
+    }, {
+        "_id": "102",
+        "name": "Develope"
+    }, {
+        "_id": "103",
+        "name": "Admin"
+    }],
+
+    "departmentOptions": [{
+        "_id": "101",
+        "name": "Design"
+    }, {
+        "_id": "102",
+        "name": "Develope"
+    }, {
+        "_id": "103",
+        "name": "Admin"
+    }],
+
+    "docsAfterPopulate": [{
+        "_id": "001",
+        "name": "Charles",
+        "jobTitle": "CEO",
+        "department": {
+            "_id": "103",
+            "name": "Admin"
+        }
+    }, {
+        "_id": "002",
+        "name": "Ernie",
+        "jobTitle": "CTO",
+        "department": null
+    }, {
+        "_id": "003",
+        "name": "Steven",
+        "jobTitle": "Staff",
+        "department": {
+            "_id": "102",
+            "name": "Develope"
+        }
+    }]
+}
