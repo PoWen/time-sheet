@@ -24,16 +24,21 @@ apiHandlers.responseJsonConfigAndData = function (req, res) {
     });
 };
 
-var getData = function (modelName) {
+pvt.getData = function (modelName) {
     return pvt.findAllDocs(modelName);
 };
-pvt.getData = getData;
 
-var getConfig = function (modelName) {
+pvt.findAllDocs = function (modelName) {
+    var Model = mongoose.model(modelName);
+    var promise = Model.find().exec();
+    return promise;
+};
+
+
+pvt.getConfig = function (modelName) {
     var config = pvt.initConfig(modelName);
     return pvt.populateConfigOptions(config);
 };
-pvt.getConfig = getConfig;
 
 pvt.initConfig = function (modelName) {
     var Model = mongoose.model(modelName);
@@ -45,8 +50,6 @@ pvt.initConfig = function (modelName) {
 
     return config;
 };
-
-
 pvt.populateConfigOptions = function (config) {
     var deferred = Q.defer();
 
@@ -77,7 +80,6 @@ pvt.filterSelectFields = function (fieldSettings) {
     }
     return result;
 };
-
 pvt.populateFieldOptions = function (fieldSetting, modelName) {
     var optionModelName = pvt.getOptionModelName(fieldSetting.key, modelName);
 
@@ -92,7 +94,6 @@ pvt.getOptionModelName = function (pathName, modelName) {
 
     return schemaType.options.ref;
 };
-
 pvt.getOptions = function (modelName, selectSpec) {
     var OptionModel = mongoose.model(modelName);
     var optionsQuery = OptionModel.find().select(selectSpec);
@@ -100,12 +101,6 @@ pvt.getOptions = function (modelName, selectSpec) {
     return optionsQuery.exec();
 };
 
-var findAllDocs = function (modelName) {
-    var Model = mongoose.model(modelName);
-    var promise = Model.find().exec();
-    return promise;
-};
-pvt.findAllDocs = findAllDocs;
 
 apiHandlers.saveJsonDocs = function (req, res) {
     var toSaveDoc = req.body;

@@ -23,7 +23,7 @@ describe('dataAdmin module', function () {
         var $rootScope = $injector.get('$rootScope');
         $scope = $rootScope.$new();
 
-         //window.location is readonly, so create a empty one
+        //window.location is readonly, so create a empty one
         var $window = { };
         $window.location = { };
         $window.location.pathname = '/data/members';
@@ -103,11 +103,11 @@ describe('dataAdmin module', function () {
             },
             model: 'members',
         };
-        var $httpBackend;
         var mockResponseData = {
             config: mockConfig,
             data: mockData,
         };
+        var $httpBackend;
 
         beforeEach(function () {
             $httpBackend = $injector.get('$httpBackend');
@@ -156,32 +156,30 @@ describe('dataAdmin module', function () {
                 {
                     field: { _id: { } },
                     target: null,
-                },
-                {
+                }, {
                     field: { key: 'jobTitle', name: '職稱', col: 1 },
                     target: { 
                         name: 'jobTitle',
                         field: 'jobTitle',
                         displayName: '職稱',
                     },
-                },
-                {
-                field: {
-                    key: 'department',
-                    name: '部門',
-                    col: 2,
-                    type: 'select',
-                    options: [{
-                        "_id": "101",
-                        "name": "Design"
-                    }, {
-                        "_id": "102",
-                        "name": "Develope"
-                    }, {
-                        "_id": "103",
-                        "name": "Admin"
-                    }],
-                },
+                }, {
+                    field: {
+                        key: 'department',
+                        name: '部門',
+                        col: 2,
+                        type: 'select',
+                        options: [{
+                            "_id": "101",
+                            "name": "Design"
+                        }, {
+                            "_id": "102",
+                            "name": "Develope"
+                        }, {
+                            "_id": "103",
+                            "name": "Admin"
+                        }],
+                    }, 
                     target: { 
                         name: 'department',
                         field: 'department',
@@ -213,6 +211,4 @@ describe('dataAdmin module', function () {
             expect($scope.docs[3]).toEqual({ });
         });
     });
-
-    //設定好 grid option
 });

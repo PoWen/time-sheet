@@ -14,30 +14,6 @@ var db = require.main.require('./tests/mocks/mock-db-response.json');
 
 describe('json api', function () {
     var req, res;
-
-    var getMockModelFieldsSetting = function () {
-        var fieldSettingMap = Model.getFieldSettingMap();
-        fieldSettingMap._id = { };
-        fieldSettingMap.__v = { };
-        return fieldSettingMap;
-    };
-    var getMockDepartmentOptions = function () {
-        return db.departmentOptions;
-    };
-    var getMockConfig = function () {
-        var fieldsSetting = getMockModelFieldsSetting();
-        fieldsSetting.department.options = getMockDepartmentOptions();
-        var mockConfig = {
-            model: modelName,
-            fields: fieldsSetting,
-        };
-        return mockConfig;
-    };
-
-    var getMockData = function () {
-        return db.docs;
-    };
-
     beforeEach(function () {
         req = {};
         req.params = {
@@ -49,15 +25,15 @@ describe('json api', function () {
     });
 
     it('responseJsonConfigAndData', function (done) {
-        var mockData = getMockData();
-        var mockConfig = getMockConfig();
-        var mockResponse = {
-            config: mockConfig,
-            data: mockData,
+        var fakeData = db.docs;
+        var fakeConfig = 'obj for frontend data admin interface';
+        var fakeResponse = {
+            config: fakeConfig,
+            data: fakeData,
         };
 
-        spyOn(pvt, 'getConfig').and.returnValue(P.resolvedWith(mockConfig));
-        spyOn(pvt, 'getData').and.returnValue(P.resolvedWith(mockData));
+        spyOn(pvt, 'getConfig').and.returnValue(P.resolvedWith(fakeConfig));
+        spyOn(pvt, 'getData').and.returnValue(P.resolvedWith(fakeData));
         spyOn(res, 'json');
 
         apiHandlers.responseJsonConfigAndData(req, res).catch(function (error) {
@@ -65,7 +41,7 @@ describe('json api', function () {
         }).finally(function () {
             expect(pvt.getConfig).toHaveBeenCalledWith(modelName);
             expect(pvt.getData).toHaveBeenCalledWith(modelName);
-            expect(res.json).toHaveBeenCalledWith(mockResponse);
+            expect(res.json).toHaveBeenCalledWith(fakeResponse);
             done();
         });
     });

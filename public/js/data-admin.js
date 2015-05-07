@@ -45,6 +45,7 @@ dataAdmin.controller('DataCtrl',
 
     var modelName = '';
 
+
     pvt.init = function () {
         modelName = pvt.getModelName($window.location.pathname);
         return pvt.getData(modelName).then(pvt.getDataDone);
@@ -84,7 +85,6 @@ dataAdmin.controller('DataCtrl',
     };
 
     $scope.fieldOptions = {};
-
     pvt.adaptToColumnDef = function (field) {
         if (!isVisible(field)) return null;
 
@@ -104,6 +104,9 @@ dataAdmin.controller('DataCtrl',
 
         return column;
     };
+    var isVisible = function (field) {
+        return !!field.name;
+    };
     pvt.adaptToDropdownOptions = function (fieldOptions) {
         return fieldOptions.map(function (option) {
             return {
@@ -117,10 +120,6 @@ dataAdmin.controller('DataCtrl',
             prev[current._id] = current.name;
             return prev;
         }, { });
-    };
-
-    var isVisible = function (field) {
-        return !!field.name;
     };
 
     pvt.assignDataToModel = function (data) {
