@@ -173,7 +173,7 @@ describe('json api', function () {
                     var selectFields = pvt.filterSelectFields(spec.fieldSettings);
 
                     spec.selectFields.forEach(function (fieldName) {
-                        expect(selectFields.indexOf(fieldName)).not.toBe(-1);
+                        expect(selectFields).toContain(fieldName);
                     });
                 });
             });

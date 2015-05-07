@@ -1,0 +1,30 @@
+{
+    "name": "members",
+    "schema": {
+        "name": {
+            "schemaType": "String",
+            "setting": {
+                "name": "姓名",
+                "col": 0
+            }
+        },
+        "jobTitle": {
+            "schemaType": "String",
+            "setting": {
+                "name": "職稱",
+                "col": 1
+            }
+        },
+        "department": {
+            "schemaType": {
+                "type": "ObjectId",
+                "ref": "departments"
+            },
+            "setting": {
+                "name": "部門",
+                "col": 2,
+                "type": "select"
+            }
+        }
+    }
+}

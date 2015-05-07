@@ -13,7 +13,7 @@ exports.config = {
 
     rootElement: '.ng-app',
 
-    framework: 'jasmine',
+    framework: 'jasmine2',
 
     jasmineNodeOpts: {
         defaultTimeoutInterval: 30000
