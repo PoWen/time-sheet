@@ -1,0 +1,24 @@
+{
+    "model": "projects",
+    "name": "專案資料",
+    "schema": {
+        "name": {
+            "schemaType": "String",
+            "setting": {
+                "name": "專案名稱",
+                "col": 0
+            }
+        },
+        "stage": {
+            "schemaType": {
+                "type": "ObjectId",
+                "ref": "projectstages"
+            },
+            "setting": {
+                "name": "專案階段",
+                "col": 1,
+                "type": "select"
+            }
+        }
+    }
+}

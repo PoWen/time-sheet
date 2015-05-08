@@ -1,0 +1,20 @@
+{
+    "model": "levels",
+    "name": "薪資水平",
+    "schema": {
+        "name": {
+            "schemaType": "String",
+            "setting": {
+                "name": "薪資水平",
+                "col": 0
+            }
+        },
+        "hourCost": {
+            "schemaType": "String",
+            "setting": {
+                "name": "工時成本",
+                "col": 1
+            }
+        }
+    }
+}

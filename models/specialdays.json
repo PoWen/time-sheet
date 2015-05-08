@@ -1,0 +1,31 @@
+{
+    "model": "specialdays",
+    "name": "特別日設定",
+    "schema": {
+        "date": {
+            "schemaType": "String",
+            "setting": {
+                "name": "日期",
+                "col": 0
+            }
+        },
+        "name": {
+            "schemaType": "String",
+            "setting": {
+                "name": "名稱",
+                "col": 1
+            }
+        },
+        "daytype": {
+            "schemaType": {
+                "type": "ObjectId",
+                "ref": "daytypes"
+            },
+            "setting": {
+                "name": "日期種類",
+                "col": 2,
+                "type": "select"
+            }
+        }
+    }
+}

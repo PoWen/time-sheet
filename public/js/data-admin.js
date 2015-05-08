@@ -45,9 +45,13 @@ dataAdmin.controller('DataCtrl',
 
     var modelName = '';
 
+    $scope.models = [];
 
     pvt.init = function () {
         modelName = pvt.getModelName($window.location.pathname);
+        pvt.getModels().then(function (models) {
+            $scope.models = models;
+        });
         return pvt.getData(modelName).then(pvt.getDataDone);
     };
     starter.onInit(pvt.init);
@@ -150,6 +154,12 @@ dataAdmin.controller('DataCtrl',
         });
 
         $scope.gridApi.rowEdit.setSavePromise( doc, promise );
+    };
+
+    pvt.getModels = function () {
+        return $http.get('/api/get-models').then(function (res) {
+            return res.data;
+        });
     };
 
     starter.init();

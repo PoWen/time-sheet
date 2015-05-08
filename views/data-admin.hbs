@@ -5,6 +5,11 @@
 
 {{{{raw-helper}}}}
 <div ng-app="dataAdmin" class="container ng-app" ng-controller="DataCtrl">
+  <div class="model-list">
+    <a ng-repeat="model in models" href="{{model.model}}">
+      <button class="model-button">{{model.name}}</button>
+    </a>
+  </div>
   <div class="grid-table" ui-grid="gridOptions" ui-grid-edit ui-grid-row-edit ui-grid-cellNav></div>
 </div>
 {{{{/raw-helper}}}}

@@ -4,6 +4,7 @@ var Q = require('q');
 var mongoose = require('mongoose');
 
 var dbManager = require.main.require('./lib/db-manager.js');
+var modelManager = require.main.require('./lib/model-manager.js');
 
 var apiHandlers = {};
 apiHandlers.pvt = {};
@@ -139,3 +140,8 @@ var updateDoc = function (modelName, doc) {
 pvt.updateDoc = updateDoc;
 
 module.exports = apiHandlers;
+
+
+apiHandlers.getModels = function (req, res) {
+    res.json(modelManager.getModels());
+};

@@ -3,7 +3,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var fieldsSettingPlugin = require.main.require('./models/fields-setting-plugin.js');
+var fieldsSettingPlugin = require.main.require('./lib/fields-setting-plugin.js');
 
 var schema = Schema({
     name: String,

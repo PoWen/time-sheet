@@ -1,3 +1,9 @@
 .grid-table {
   height: 500px;
 }
+
+.model-button {
+    width: 120px;
+    height: 30px;
+    margin: 5px;
+}

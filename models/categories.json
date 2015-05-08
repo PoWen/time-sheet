@@ -1,11 +1,11 @@
 {
-    "model": "departments",
-    "name": "部門資料",
+    "model": "categories",
+    "name": "工作類別",
     "schema": {
         "name": {
             "schemaType": "String",
             "setting": {
-                "name": "部門名稱",
+                "name": "工作類別",
                 "col": 0
             }
         }

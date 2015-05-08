@@ -6,7 +6,8 @@ var pvt = modelManager.pvt;
 var mongoose = require('mongoose');
 
 var schemaSetting = {
-    "name": "members",
+    "model": "members",
+    "name": "成員",
     "schema": {
         "name": {
             "schemaType": "String",
@@ -46,7 +47,7 @@ describe('buildModel', function () {
     var fackModel = {
         buildFieldSettingMap: function () {},
     };
-    var fieldsSettingPlugin = require.main.require('./models/fields-setting-plugin.js');
+    var fieldsSettingPlugin = require.main.require('./lib/fields-setting-plugin.js');
 
     beforeEach(function () {
         spyOn(pvt, 'createSchema').and.returnValue(fackSchema);
@@ -69,7 +70,7 @@ describe('buildModel', function () {
 
     it('apply fields setting plugin', function () {
         expect(fackSchema.plugin).toHaveBeenCalledWith(fieldsSettingPlugin, settingMap);
-        expect(mongoose.model).toHaveBeenCalledWith(schemaSetting.name, fackSchema);
+        expect(mongoose.model).toHaveBeenCalledWith(schemaSetting.model, fackSchema);
         expect(fackModel.buildFieldSettingMap).toHaveBeenCalled();
     });
 });

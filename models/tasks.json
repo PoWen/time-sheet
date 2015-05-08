@@ -1,0 +1,31 @@
+{
+    "model": "tasks",
+    "name": "工作代碼",
+    "schema": {
+        "name": {
+            "schemaType": "String",
+            "setting": {
+                "name": "工作名稱",
+                "col": 0
+            }
+        },
+        "code": {
+            "schemaType": "String",
+            "setting": {
+                "name": "工作代碼",
+                "col": 1
+            }
+        },
+        "category": {
+            "schemaType": {
+                "type": "ObjectId",
+                "ref": "categories"
+            },
+            "setting": {
+                "name": "工作分類",
+                "col": 2,
+                "type": "select"
+            }
+        }
+    }
+}
