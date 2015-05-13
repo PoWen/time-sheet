@@ -139,9 +139,8 @@ var updateDoc = function (modelName, doc) {
 };
 pvt.updateDoc = updateDoc;
 
-module.exports = apiHandlers;
-
-
 apiHandlers.getModels = function (req, res) {
     res.json(modelManager.getModels());
 };
+
+module.exports = apiHandlers;

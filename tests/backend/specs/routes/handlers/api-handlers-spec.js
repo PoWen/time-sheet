@@ -1,13 +1,12 @@
 'use strict';
 
-var P = require.main.require('./tests/backend/lib/promise-mock.js');
-
 var apiHandlers = require.main.require('./routes/handlers/api-handlers.js');
 var pvt = apiHandlers.pvt;
 
+var P = require.main.require('./tests/backend/lib/promise-mock.js');
+
 //Model for test example
 var Model = require.main.require('./tests/mocks/model-for-test.js');
-var modelName = Model.modelName;
 var testModelName = Model.modelName;
 
 var db = require.main.require('./tests/mocks/mock-db-response.json');
@@ -17,7 +16,7 @@ describe('json api', function () {
     beforeEach(function () {
         req = {};
         req.params = {
-            model: modelName
+            model: testModelName
         };
 
         res = {};
@@ -39,8 +38,8 @@ describe('json api', function () {
         apiHandlers.responseJsonConfigAndData(req, res).catch(function (error) {
             console.log(error.stack);
         }).finally(function () {
-            expect(pvt.getConfig).toHaveBeenCalledWith(modelName);
-            expect(pvt.getData).toHaveBeenCalledWith(modelName);
+            expect(pvt.getConfig).toHaveBeenCalledWith(testModelName);
+            expect(pvt.getData).toHaveBeenCalledWith(testModelName);
             expect(res.json).toHaveBeenCalledWith(fakeResponse);
             done();
         });

@@ -3,6 +3,7 @@
 var modelManager = require.main.require('./lib/model-manager.js');
 var pvt = modelManager.pvt;
 
+var fs = require('fs');
 var mongoose = require('mongoose');
 
 var schemaSetting = {
@@ -37,6 +38,37 @@ var schemaSetting = {
     }
 };
 
+describe('loadModels', function () {
+    var fakeFiles = ['members.json', 'departments.json', 'members.js'];
+    var fakeModel = { name: 'model'};
+    beforeEach(function () {
+        spyOn(pvt, 'buildModel').and.returnValue(fakeModel);
+    });
+
+    it('load model schemas from models folder', function () {
+        spyOn(fs, 'readdir').and.callFake(function (modelName) {
+            expect(modelName).toBe('./models');
+        });
+
+        modelManager.loadModels();
+    });
+
+    it('load model schemas from models folder', function () {
+        spyOn(fs, 'readdir').and.callFake(function (modelName, callback) {
+            callback(null, fakeFiles);
+        });
+
+        spyOn(pvt, 'loadModel').and.callThrough();
+
+        modelManager.loadModels();
+
+        expect(pvt.loadModel.calls.count()).toBe(3);
+        expect(pvt.loadModel).toHaveBeenCalledWith('members.json');
+        expect(pvt.loadModel).toHaveBeenCalledWith('departments.json');
+        expect(pvt.buildModel.calls.count()).toBe(2);
+    });
+});
+
 describe('buildModel', function () {
     var fackSchema = {
         plugin: function () {},
@@ -66,7 +98,6 @@ describe('buildModel', function () {
     it('collect field setting', function () {
         expect(pvt.collectFieldSettings).toHaveBeenCalledWith(schemaSetting);
     });
-    //schema.plugin(fieldsSettingPlugin, settingMap);
 
     it('apply fields setting plugin', function () {
         expect(fackSchema.plugin).toHaveBeenCalledWith(fieldsSettingPlugin, settingMap);
