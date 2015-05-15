@@ -3,14 +3,14 @@
     "name": "專案資料",
     "schema": {
         "name": {
-            "schemaType": "String",
+            "valueDef": "String",
             "setting": {
                 "name": "專案名稱",
                 "col": 0
             }
         },
         "stage": {
-            "schemaType": {
+            "valueDef": {
                 "type": "ObjectId",
                 "ref": "projectstages"
             },
@@ -18,6 +18,17 @@
                 "name": "專案階段",
                 "col": 1,
                 "type": "select"
+            }
+        },
+        "members": {
+            "valueDef": {
+                "type": ["ObjectId"],
+                "ref": "members"
+            },
+            "setting": {
+                "name": "參與人員",
+                "col": 2,
+                "type": "multiselect"
             }
         }
     }

@@ -3,14 +3,14 @@
     "name": "日期種類",
     "schema": {
         "name": {
-            "schemaType": "String",
+            "valueDef": "String",
             "setting": {
                 "name": "日期種類",
                 "col": 0
             }
         },
         "isWorkDay": {
-            "schemaType": "String",
+            "valueDef": "String",
             "setting": {
                 "name": "是否為上班日",
                 "col": 1

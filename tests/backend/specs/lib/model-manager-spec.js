@@ -5,38 +5,7 @@ var pvt = modelManager.pvt;
 
 var fs = require('fs');
 var mongoose = require('mongoose');
-
-var schemaSetting = {
-    "model": "members",
-    "name": "成員",
-    "schema": {
-        "name": {
-            "schemaType": "String",
-            "setting": {
-                "name": "姓名",
-                "col": 0
-            }
-        },
-        "jobTitle": {
-            "schemaType": "String",
-            "setting": {
-                "name": "職稱",
-                "col": 1
-            }
-        },
-        "department": {
-            "schemaType": {
-                "type": "ObjectId",
-                "ref": "departments"
-            },
-            "setting": {
-                "name": "部門",
-                "col": 2,
-                "type": "select"
-            }
-        }
-    }
-};
+var Schema = mongoose.Schema;
 
 describe('loadModels', function () {
     var fakeFiles = ['members.json', 'departments.json', 'members.js'];
@@ -81,6 +50,8 @@ describe('buildModel', function () {
     };
     var fieldsSettingPlugin = require.main.require('./lib/fields-setting-plugin.js');
 
+    var schemaSetting = 'object read from model.json';
+
     beforeEach(function () {
         spyOn(pvt, 'createSchema').and.returnValue(fackSchema);
         spyOn(pvt, 'collectFieldSettings').and.returnValue(settingMap);
@@ -103,5 +74,84 @@ describe('buildModel', function () {
         expect(fackSchema.plugin).toHaveBeenCalledWith(fieldsSettingPlugin, settingMap);
         expect(mongoose.model).toHaveBeenCalledWith(schemaSetting.model, fackSchema);
         expect(fackModel.buildFieldSettingMap).toHaveBeenCalled();
+    });
+});
+
+describe('createSchema', function () {
+    var schemaSetting = {
+        "model": "members",
+        "name": "成員",
+        "schema": {
+            "name": {
+                "valueDef": "String",
+                "setting": {
+                    "name": "姓名",
+                    "col": 0
+                }
+            },
+            "jobTitle": {
+                "valueDef": "String",
+                "setting": {
+                    "name": "職稱",
+                    "col": 1
+                }
+            },
+            "department": {
+                "valueDef": {
+                    "type": "ObjectId",
+                    "ref": "departments"
+                },
+                "setting": {
+                    "name": "部門",
+                    "col": 2,
+                    "type": "select"
+                }
+            },
+            "projects": {
+                "valueDef": {
+                    "type": ["ObjectId"],
+                    "ref": "projects"
+                },
+                "setting": {
+                    "name": "參與專案",
+                    "col": 3,
+                    "type": "multiselect"
+                }
+            },
+        }
+    };
+
+    var expectDefinition = {
+        name: String,
+        jobTitle: String,
+        department: {
+            type: Schema.Types.ObjectId,
+            ref: 'departments',
+        },
+        projects: {
+            type: [Schema.Types.ObjectId],
+            ref: 'projects',
+        },
+    };
+
+    it('should call toMongooseDef', function () {
+        var fakeDef = {};
+        spyOn(pvt, 'toMongooseDef').and.returnValue(fakeDef);
+
+        var fakeSchema = {};
+        spyOn(mongoose, 'Schema').and.returnValue(fakeSchema);
+
+        var result = pvt.createSchema(schemaSetting);
+
+        expect(pvt.toMongooseDef).toHaveBeenCalledWith(schemaSetting);
+        expect(mongoose.Schema).toHaveBeenCalledWith(fakeDef);
+        expect(result).toBe(fakeSchema);
+    });
+
+    describe('toMongooseDef', function () {
+        it('convert eache field setting to mongoose field def', function () {
+            var result = pvt.toMongooseDef(schemaSetting);
+            expect(result).toEqual(expectDefinition);
+        });
     });
 });

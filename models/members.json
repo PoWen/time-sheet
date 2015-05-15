@@ -3,21 +3,21 @@
     "name": "人員資料",
     "schema": {
         "name": {
-            "schemaType": "String",
+            "valueDef": "String",
             "setting": {
                 "name": "姓名",
                 "col": 0
             }
         },
         "jobTitle": {
-            "schemaType": "String",
+            "valueDef": "String",
             "setting": {
                 "name": "職稱",
                 "col": 1
             }
         },
         "department": {
-            "schemaType": {
+            "valueDef": {
                 "type": "ObjectId",
                 "ref": "departments"
             },
@@ -28,7 +28,7 @@
             }
         },
         "level": {
-            "schemaType": {
+            "valueDef": {
                 "type": "ObjectId",
                 "ref": "levels"
             },

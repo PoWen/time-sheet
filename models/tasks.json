@@ -3,21 +3,21 @@
     "name": "工作代碼",
     "schema": {
         "name": {
-            "schemaType": "String",
+            "valueDef": "String",
             "setting": {
                 "name": "工作名稱",
                 "col": 0
             }
         },
         "code": {
-            "schemaType": "String",
+            "valueDef": "String",
             "setting": {
                 "name": "工作代碼",
                 "col": 1
             }
         },
         "category": {
-            "schemaType": {
+            "valueDef": {
                 "type": "ObjectId",
                 "ref": "categories"
             },

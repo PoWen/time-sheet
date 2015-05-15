@@ -3,7 +3,7 @@
     "name": "專案階段",
     "schema": {
         "name": {
-            "schemaType": "String",
+            "valueDef": "String",
             "setting": {
                 "name": "階段名稱",
                 "col": 0

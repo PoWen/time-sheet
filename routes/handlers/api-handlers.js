@@ -93,6 +93,8 @@ pvt.getOptionModelName = function (pathName, modelName) {
     var schema = mongoose.model(modelName).schema;
     var schemaType = schema.path(pathName);
 
+    //mongoose 會把建立 model 時的參數儲存在 schemaType.options
+    //此用法沒有寫在文件上，是直接看 schemaType 物件拿來用的
     return schemaType.options.ref;
 };
 pvt.getOptions = function (modelName, selectSpec) {

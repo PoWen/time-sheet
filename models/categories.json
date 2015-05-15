@@ -3,7 +3,7 @@
     "name": "工作類別",
     "schema": {
         "name": {
-            "schemaType": "String",
+            "valueDef": "String",
             "setting": {
                 "name": "工作類別",
                 "col": 0

@@ -3,21 +3,21 @@
     "name": "特別日設定",
     "schema": {
         "date": {
-            "schemaType": "String",
+            "valueDef": "String",
             "setting": {
                 "name": "日期",
                 "col": 0
             }
         },
         "name": {
-            "schemaType": "String",
+            "valueDef": "String",
             "setting": {
                 "name": "名稱",
                 "col": 1
             }
         },
         "daytype": {
-            "schemaType": {
+            "valueDef": {
                 "type": "ObjectId",
                 "ref": "daytypes"
             },

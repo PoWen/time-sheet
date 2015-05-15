@@ -3,7 +3,7 @@
     "name": "部門資料",
     "schema": {
         "name": {
-            "schemaType": "String",
+            "valueDef": "String",
             "setting": {
                 "name": "部門名稱",
                 "col": 0
