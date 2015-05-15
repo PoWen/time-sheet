@@ -75,12 +75,22 @@ pvt.filterSelectFields = function (fieldSettings) {
     var field, setting;
     for (field in fieldSettings) {
         setting = fieldSettings[field];
-        if (setting.type === 'select') {
+        if (isSelect(setting)) {
             result.push(field);
         }
     }
     return result;
 };
+var isSelect = function (setting) {
+    switch (setting.type) {
+        case 'select':
+        case 'multiselect':
+            return true;
+        default:
+            return false;
+    }
+};
+
 pvt.populateFieldOptions = function (fieldSetting, modelName) {
     var optionModelName = pvt.getOptionModelName(fieldSetting.key, modelName);
 

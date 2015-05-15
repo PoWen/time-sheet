@@ -163,8 +163,9 @@ describe('json api', function () {
                         name: { key: 'name'},
                         gender: { key: 'gender', type: 'select'},
                         department: { key: 'department', type: 'select'},
+                        projects: { key: 'projects', type: 'multiselect'},
                     },
-                    selectFields: ['department', 'gender'],
+                    selectFields: ['department', 'gender', 'projects'],
                 },
             ];
             specs.forEach(function (spec) {
