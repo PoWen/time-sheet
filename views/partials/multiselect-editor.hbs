@@ -1,7 +1,7 @@
 {{{{raw-helper}}}}
-<ui-select ng-model="MODEL_COL_FIELD" my-multiselect multiple style="position:absolute">
+<ui-select ng-model="MODEL_COL_FIELD" my-multiselect multiple close-on-select="false" on-select="clearInput()" on-remove="clearInput()" style="position:absolute">
   <ui-select-match>{{$item.value}}</ui-select-match>
-  <ui-select-choices repeat="option.id as option in editDropdownOptionsArray">
+  <ui-select-choices repeat="option.id as option in editDropdownOptionsArray | filter: { value: $select.search }">
     <div ng-bind-html="option.value"></div>
   </ui-select-choices>
 </ui-select>

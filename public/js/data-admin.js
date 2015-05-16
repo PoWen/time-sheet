@@ -6,6 +6,7 @@ var dataAdmin = angular.module('dataAdmin', [
         'ngSanitize', 'ui.select', 
         'ui.grid', 'ui.grid.edit', 'ui.grid.rowEdit', 'ui.grid.cellNav']);
 
+
 dataAdmin.factory('starter', [function(){
     var that = {};
 
@@ -45,12 +46,14 @@ dataAdmin.directive('myDropdown',
                 pre: function () {
                 },
                 post: function ($scope, $elm, $attrs) {
-                    $scope.$on(uiGridEditConstants.events.BEGIN_CELL_EDIT, function() {
+                    $scope.$on(uiGridEditConstants.events.BEGIN_CELL_EDIT, function(evt) {
                         $elm[0].style.width = ($elm[0].parentElement.offsetWidth - 1) + 'px';
 
-                        // focus the focusser, putting focus onto select but without opening the dropdown
-                        var uiSelect = angular.element($elm[0]).controller('uiSelect');
-                        uiSelect.focusser[0].focus();
+                        $scope.uiSelect = angular.element($elm[0]).controller('uiSelect');
+                        $scope.uiSelect.setFocus();
+                        setTimeout(function () {
+                            $scope.uiSelect.activate();
+                        });
 
                         $scope.stopEdit = function(evt) {
                             $scope.$emit(uiGridEditConstants.events.END_CELL_EDIT);
@@ -76,10 +79,20 @@ dataAdmin.directive('myMultiselect',
                     $scope.$on(uiGridEditConstants.events.BEGIN_CELL_EDIT, function() {
                         $elm[0].style.width = ($elm[0].parentElement.offsetWidth - 1) + 'px';
 
+                        $scope.uiSelect = angular.element($elm[0]).controller('uiSelect');
+                        $scope.uiSelect.setFocus();
+                        $scope.uiSelect.activate();
+
                         $scope.stopEdit = function(evt) {
                             $scope.$emit(uiGridEditConstants.events.END_CELL_EDIT);
                         };
                     });
+
+                    $scope.clearInput = function () {
+                        $scope.uiSelect.search = '';
+                        $scope.uiSelect.setFocus();
+                        $scope.uiSelect.activate();
+                    };
                 }
             };
         }
@@ -164,19 +177,18 @@ dataAdmin.controller('DataCtrl',
             column.filter.type = uiGridConstants.filter.SELECT;
             column.filter.selectOptions = pvt.adaptToFilterOptions(field.options);
 
-            $scope.fieldOptions[field.key] = pvt.converToOptionMap(field.options);
+            $scope.fieldOptions[field.key] = pvt.convertToOptionMap(field.options);
             column.cellFilter = 'options:grid.appScope.fieldOptions.' + field.key;
 
             column.editableCellTemplate = selectTemplate;
             column.editDropdownOptionsArray = pvt.adaptToDropdownOptions(field.options);
-
         } else if (field.type === 'multiselect') {
             column.filter = { };
             column.filter.condition = uiGridConstants.filter.CONTAINS;
             column.filter.type = uiGridConstants.filter.SELECT;
             column.filter.selectOptions = pvt.adaptToFilterOptions(field.options);
 
-            $scope.fieldOptions[field.key] = pvt.converToOptionMap(field.options);
+            $scope.fieldOptions[field.key] = pvt.convertToOptionMap(field.options);
             column.cellFilter = 'options:grid.appScope.fieldOptions.' + field.key;
 
             column.editableCellTemplate = multiselectTemplate;
@@ -204,7 +216,7 @@ dataAdmin.controller('DataCtrl',
             };
         });
     };
-    pvt.converToOptionMap = function (fieldOptions) {
+    pvt.convertToOptionMap = function (fieldOptions) {
         return fieldOptions.reduce(function (prev, current) {
             prev[current._id] = current.name;
             return prev;
