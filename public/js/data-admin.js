@@ -87,8 +87,8 @@ dataAdmin.directive('myMultiselect',
 }]);
 
 dataAdmin.controller('DataCtrl',
-        ['$scope', '$http', '$window', '$timeout', 'uiGridEditConstants', 'starter', '$templateCache',
-        function ($scope, $http, $window, $timeout, uiGridEditConstants, starter, $templateCache) {
+        ['$scope', '$http', '$window', '$timeout', 'uiGridConstants', 'uiGridEditConstants', 'starter', '$templateCache',
+        function ($scope, $http, $window, $timeout, uiGridConstants, uiGridEditConstants, starter, $templateCache) {
 
     $scope.pvt = {};
     var pvt = $scope.pvt;
@@ -154,30 +154,47 @@ dataAdmin.controller('DataCtrl',
         var column = {};
         column.name = field.key;
         column.displayName = field.name;
+        column.field = field.key;
 
         var selectTemplate = $templateCache.get('select-editor.html');
         var multiselectTemplate = $templateCache.get('multiselect-editor.html');
 
         if (field.type === 'select') {
-            column.field = field.key;
+            column.filter = { };
+            column.filter.type = uiGridConstants.filter.SELECT;
+            column.filter.selectOptions = pvt.adaptToFilterOptions(field.options);
+
+            $scope.fieldOptions[field.key] = pvt.converToOptionMap(field.options);
+            column.cellFilter = 'options:grid.appScope.fieldOptions.' + field.key;
+
             column.editableCellTemplate = selectTemplate;
             column.editDropdownOptionsArray = pvt.adaptToDropdownOptions(field.options);
+
+        } else if (field.type === 'multiselect') {
+            column.filter = { };
+            column.filter.condition = uiGridConstants.filter.CONTAINS;
+            column.filter.type = uiGridConstants.filter.SELECT;
+            column.filter.selectOptions = pvt.adaptToFilterOptions(field.options);
+
             $scope.fieldOptions[field.key] = pvt.converToOptionMap(field.options);
             column.cellFilter = 'options:grid.appScope.fieldOptions.' + field.key;
-        } else if (field.type === 'multiselect') {
-            column.field = field.key;
+
             column.editableCellTemplate = multiselectTemplate;
             column.editDropdownOptionsArray = pvt.adaptToDropdownOptions(field.options);
-            $scope.fieldOptions[field.key] = pvt.converToOptionMap(field.options);
-            column.cellFilter = 'options:grid.appScope.fieldOptions.' + field.key;
-        } else {
-            column.field = field.key;
         }
 
         return column;
     };
     var isVisible = function (field) {
         return !!field.name;
+    };
+    pvt.adaptToFilterOptions = function (fieldOptions) {
+        return fieldOptions.map(function (option) {
+            return {
+                value: option._id,
+                label: option.name,
+            };
+        });
     };
     pvt.adaptToDropdownOptions = function (fieldOptions) {
         return fieldOptions.map(function (option) {
