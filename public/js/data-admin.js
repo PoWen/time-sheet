@@ -2,8 +2,9 @@
 
 /* globals angular */
 
-var dataAdmin = angular.module('dataAdmin',
-        ['ui.grid', 'ui.grid.edit', 'ui.grid.rowEdit', 'ui.grid.cellNav']);
+var dataAdmin = angular.module('dataAdmin', [
+        'ngSanitize', 'ui.select', 
+        'ui.grid', 'ui.grid.edit', 'ui.grid.rowEdit', 'ui.grid.cellNav']);
 
 dataAdmin.factory('starter', [function(){
     var that = {};
@@ -23,13 +24,71 @@ dataAdmin.factory('starter', [function(){
 
 dataAdmin.filter('options', [function () {
     return function (input, options) {
-        return options[input];
+        if (Array.isArray(input)) {
+            return input.map(function (value) {
+                return options[value];
+            }).join(', ');
+        } else {
+            return options[input];
+        }
+    };
+}]);
+
+dataAdmin.directive('myDropdown',
+    ['uiGridConstants', 'uiGridEditConstants',
+        function (uiGridConstants, uiGridEditConstants){
+
+    return {
+        scope: true,
+        compile: function () {
+            return {
+                pre: function () {
+                },
+                post: function ($scope, $elm, $attrs) {
+                    $scope.$on(uiGridEditConstants.events.BEGIN_CELL_EDIT, function() {
+                        $elm[0].style.width = ($elm[0].parentElement.offsetWidth - 1) + 'px';
+
+                        // focus the focusser, putting focus onto select but without opening the dropdown
+                        var uiSelect = angular.element($elm[0]).controller('uiSelect');
+                        uiSelect.focusser[0].focus();
+
+                        $scope.stopEdit = function(evt) {
+                            $scope.$emit(uiGridEditConstants.events.END_CELL_EDIT);
+                        };
+                    });
+                }
+            };
+        }
+    };
+}]);
+
+dataAdmin.directive('myMultiselect',
+    ['uiGridConstants', 'uiGridEditConstants',
+        function (uiGridConstants, uiGridEditConstants){
+
+    return {
+        scope: true,
+        compile: function () {
+            return {
+                pre: function () {
+                },
+                post: function ($scope, $elm, $attrs) {
+                    $scope.$on(uiGridEditConstants.events.BEGIN_CELL_EDIT, function() {
+                        $elm[0].style.width = ($elm[0].parentElement.offsetWidth - 1) + 'px';
+
+                        $scope.stopEdit = function(evt) {
+                            $scope.$emit(uiGridEditConstants.events.END_CELL_EDIT);
+                        };
+                    });
+                }
+            };
+        }
     };
 }]);
 
 dataAdmin.controller('DataCtrl',
-        ['$scope', '$http', '$window', '$timeout', 'uiGridConstants', 'starter',
-        function ($scope, $http, $window, $timeout, uiGridConstants, starter) {
+        ['$scope', '$http', '$window', '$timeout', 'uiGridEditConstants', 'starter', '$templateCache',
+        function ($scope, $http, $window, $timeout, uiGridEditConstants, starter, $templateCache) {
 
     $scope.pvt = {};
     var pvt = $scope.pvt;
@@ -96,9 +155,18 @@ dataAdmin.controller('DataCtrl',
         column.name = field.key;
         column.displayName = field.name;
 
+        var selectTemplate = $templateCache.get('select-editor.html');
+        var multiselectTemplate = $templateCache.get('multiselect-editor.html');
+
         if (field.type === 'select') {
             column.field = field.key;
-            column.editableCellTemplate = 'ui-grid/dropdownEditor';
+            column.editableCellTemplate = selectTemplate;
+            column.editDropdownOptionsArray = pvt.adaptToDropdownOptions(field.options);
+            $scope.fieldOptions[field.key] = pvt.converToOptionMap(field.options);
+            column.cellFilter = 'options:grid.appScope.fieldOptions.' + field.key;
+        } else if (field.type === 'multiselect') {
+            column.field = field.key;
+            column.editableCellTemplate = multiselectTemplate;
             column.editDropdownOptionsArray = pvt.adaptToDropdownOptions(field.options);
             $scope.fieldOptions[field.key] = pvt.converToOptionMap(field.options);
             column.cellFilter = 'options:grid.appScope.fieldOptions.' + field.key;
@@ -139,6 +207,9 @@ dataAdmin.controller('DataCtrl',
     $scope.gridOptions.onRegisterApi = function (gridApi) {
         $scope.gridApi = gridApi;
         gridApi.rowEdit.on.saveRow($scope, $scope.saveDoc);
+        gridApi.cellNav.on.navigate($scope, function(newRowCol, oldRowCol) {
+            $scope.$broadcast(uiGridEditConstants.events.END_CELL_EDIT);
+        });
     };
 
     $scope.saveDoc = function (doc) {

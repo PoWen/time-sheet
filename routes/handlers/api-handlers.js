@@ -146,7 +146,7 @@ pvt.createDoc = createDoc;
 
 var updateDoc = function (modelName, doc) {
     var Model = dbManager.getDbModel(modelName);
-    var promise = Model.findOneAndUpdate({ _id: doc._id }, doc).exec();
+    var promise = Model.findOneAndUpdate({ _id: doc._id }, doc, { new: true }).exec();
     return promise;
 };
 pvt.updateDoc = updateDoc;

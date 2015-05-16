@@ -1,0 +1,8 @@
+{{{{raw-helper}}}}
+<ui-select ng-model="MODEL_COL_FIELD" my-dropdown on-select="stopEdit()" style="position:absolute">
+  <ui-select-match>{{$select.selected.value}}</ui-select-match>
+  <ui-select-choices repeat="option.id as option in editDropdownOptionsArray">
+    <div ng-bind-html="option.value"></div>
+  </ui-select-choices>
+</ui-select>
+{{{{/raw-helper}}}}

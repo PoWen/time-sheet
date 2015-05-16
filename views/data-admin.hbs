@@ -1,20 +1,32 @@
 {{#section 'head'}}
   <link href="/lib/angular-ui-grid/ui-grid.min.css" rel="stylesheet">
+  <link href="/lib/angular-ui-select/dist/select.min.css" rel="stylesheet">
   <link href="/css/data-admin.css" rel="stylesheet">
 {{/section}}
 
-{{{{raw-helper}}}}
 <div ng-app="dataAdmin" class="container ng-app" ng-controller="DataCtrl">
+
+  {{{{raw-helper}}}}
   <div class="model-list">
     <a ng-repeat="model in models" href="{{model.model}}">
       <button class="model-button">{{model.name}}</button>
     </a>
   </div>
   <div class="grid-table" ui-grid="gridOptions" ui-grid-edit ui-grid-row-edit ui-grid-cellNav></div>
+  {{{{/raw-helper}}}}
+
+  <script type="text/ng-template" id="select-editor.html">
+    {{> select-editor}}
+  </script>
+  <script type="text/ng-template" id="multiselect-editor.html">
+    {{> multiselect-editor}}
+  </script>
+
 </div>
-{{{{/raw-helper}}}}
 
 {{#section 'script'}}
+  <script src="/lib/angular-sanitize/angular-sanitize.min.js"></script>
+  <script src="/lib/angular-ui-select/dist/select.min.js"></script>
   <script src="/lib/angular-ui-grid/ui-grid.js"></script>
   <script src="/js/data-admin.js"></script>
 {{/section}}
