@@ -1,5 +1,9 @@
+body {
+  padding-top: 70px;
+}
+
 .grid-table {
-  height: 500px;
+  height: 600px;
 }
 
 .model-button {

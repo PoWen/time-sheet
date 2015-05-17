@@ -4,15 +4,42 @@
   <link href="/css/data-admin.css" rel="stylesheet">
 {{/section}}
 
-<div ng-app="dataAdmin" class="container ng-app" ng-controller="DataCtrl">
+<div class="ng-app" ng-controller="DataCtrl">
 
   {{{{raw-helper}}}}
-  <div class="model-list">
-    <a ng-repeat="model in models" href="{{model.model}}">
-      <button class="model-button">{{model.name}}</button>
-    </a>
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">資料管理</a>
+      </div>
+      <div id="navbar" class="collapse navbar-collapse">
+        <ul class="nav navbar-nav">
+          <li ng-repeat="model in models"><a href="{{model.model}}">{{model.name}}</a></li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+              表單群組<span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu" role="menu">
+              <li ng-repeat="model in models"><a href="{{model.model}}">{{model.name}}</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="grid-table" ui-grid="gridOptions" ui-grid-edit ui-grid-row-edit ui-grid-cellNav></div>
+      </div>
+    </div>
   </div>
-  <div class="grid-table" ui-grid="gridOptions" ui-grid-edit ui-grid-row-edit ui-grid-cellNav></div>
   {{{{/raw-helper}}}}
 
   <script type="text/ng-template" id="select-editor.html">
@@ -25,8 +52,4 @@
 </div>
 
 {{#section 'script'}}
-  <script src="/lib/angular-sanitize/angular-sanitize.min.js"></script>
-  <script src="/lib/angular-ui-select/dist/select.min.js"></script>
-  <script src="/lib/angular-ui-grid/ui-grid.js"></script>
-  <script src="/js/data-admin.js"></script>
 {{/section}}
