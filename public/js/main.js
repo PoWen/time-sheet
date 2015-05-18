@@ -21,7 +21,7 @@ require.config({
         'angular-sanitize': ['angular'],
         'angular-ui-select': ['angular'],
         'angular-ui-grid': ['angular'],
-    }
+    },
 });
 
 define(function (require) {

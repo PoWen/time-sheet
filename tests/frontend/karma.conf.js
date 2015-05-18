@@ -10,28 +10,20 @@ module.exports = function (config) {
         },
 
         files: [
-            //lib
-            'public/lib/jquery/dist/jquery.js',
-            'public/lib/bootstrap/dist/js/bootstrap.js',
-            'public/lib/angular/angular.js',
-            'public/lib/angular-ui-grid/ui-grid.js',
+            { pattern: 'public/js/**/*.js', included: false },
+            { pattern: 'public/lib/**/*.js', included: false },
+            { pattern: 'public/lib/**/*.map', included: false },
+            { pattern: 'tests/frontend/**/*.js', included: false },
+            'test-main.js'
+        ],
 
-            //src
-            'public/js/**/*.js',
-
-            //assets
-            'tests/mocks/**/*.json',
-
-            //tests
-            'public/lib/angular-mocks/angular-mocks.js',
-            'tests/frontend/mocks/**/*.js',
-            'tests/frontend/specs/**/*[Ss]pec.js',
-
+        exclude: [
+            'public/js/main.js',
         ],
 
         autoWatch: true,
 
-        frameworks: ['jasmine'],
+        frameworks: ['jasmine', 'requirejs'],
 
         browsers: ['Chrome'],
 
@@ -40,6 +32,7 @@ module.exports = function (config) {
             'karma-phantomjs-launcher',
             'karma-jasmine',
             'karma-ng-html2js-preprocessor',
+            'karma-requirejs',
         ],
     });
 };
