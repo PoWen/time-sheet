@@ -1,6 +1,6 @@
 'use strict';
 
-/* globals define */
+/* globals define, document */
 
 define(function (require) {
     require('jquery');
@@ -52,8 +52,8 @@ define(function (require) {
                 return {
                     pre: function () {
                     },
-                    post: function ($scope, $elm, $attrs) {
-                        $scope.$on(uiGridEditConstants.events.BEGIN_CELL_EDIT, function(evt) {
+                    post: function ($scope, $elm) {
+                        $scope.$on(uiGridEditConstants.events.BEGIN_CELL_EDIT, function() {
                             $elm[0].style.width = ($elm[0].parentElement.offsetWidth - 1) + 'px';
 
                             $scope.uiSelect = angular.element($elm[0]).controller('uiSelect');
@@ -62,7 +62,7 @@ define(function (require) {
                                 $scope.uiSelect.activate();
                             });
 
-                            $scope.stopEdit = function(evt) {
+                            $scope.stopEdit = function() {
                                 $scope.$emit(uiGridEditConstants.events.END_CELL_EDIT);
                             };
                         });
@@ -82,7 +82,7 @@ define(function (require) {
                 return {
                     pre: function () {
                     },
-                    post: function ($scope, $elm, $attrs) {
+                    post: function ($scope, $elm) {
                         $scope.$on(uiGridEditConstants.events.BEGIN_CELL_EDIT, function() {
                             $elm[0].style.width = ($elm[0].parentElement.offsetWidth - 1) + 'px';
 
@@ -90,7 +90,7 @@ define(function (require) {
                             $scope.uiSelect.setFocus();
                             $scope.uiSelect.activate();
 
-                            $scope.stopEdit = function(evt) {
+                            $scope.stopEdit = function() {
                                 $scope.$emit(uiGridEditConstants.events.END_CELL_EDIT);
                             };
                         });
@@ -240,7 +240,7 @@ define(function (require) {
         $scope.gridOptions.onRegisterApi = function (gridApi) {
             $scope.gridApi = gridApi;
             gridApi.rowEdit.on.saveRow($scope, $scope.saveDoc);
-            gridApi.cellNav.on.navigate($scope, function(newRowCol, oldRowCol) {
+            gridApi.cellNav.on.navigate($scope, function() {
                 $scope.$broadcast(uiGridEditConstants.events.END_CELL_EDIT);
             });
         };

@@ -1,6 +1,6 @@
 'use strict';
 
-/* globals define */
+/* globals define, document */
 
 define(function (require) {
     var angular = require('angular');
