@@ -7,7 +7,7 @@
 <div class="ng-app" ng-controller="DataCtrl">
 
   {{{{raw-helper}}}}
-  <nav class="navbar navbar-default navbar-fixed-top">
+  <nav class="navbar navbar-default">
     <div class="container">
       <div class="navbar-header">
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -20,13 +20,15 @@
       </div>
       <div id="navbar" class="collapse navbar-collapse">
         <ul class="nav navbar-nav">
-          <li ng-repeat="model in models"><a href="{{model.model}}">{{model.name}}</a></li>
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-              表單群組<span class="caret"></span>
+          <li ng-repeat="item in nvabarConfig" ng-class="{ dropdown: item.type === 'group', active: item.model === modelName}">
+            <a ng-if="item.type === 'button'" href="{{item.model}}">{{modelNameMap[item.model]}}</a>
+            <a ng-if="item.type === 'group'" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+              {{item.name}}<span class="caret"></span>
             </a>
             <ul class="dropdown-menu" role="menu">
-              <li ng-repeat="model in models"><a href="{{model.model}}">{{model.name}}</a></li>
+              <li ng-repeat="modelId in item.models">
+                <a href="{{modelId}}">{{modelNameMap[modelId]}}</a>
+              </li>
             </ul>
           </li>
         </ul>

@@ -14,6 +14,15 @@ define(function (require) {
             'ngSanitize', 'ui.select', 
             'ui.grid', 'ui.grid.edit', 'ui.grid.rowEdit', 'ui.grid.cellNav']);
 
+    dataAdmin.constant('nvabarConfig', [
+        { type: 'button', model: 'members'},
+        { type: 'button', model: 'projects'},
+        { type: 'button', model: 'levels'},
+        { type: 'button', model: 'departments'},
+        { type: 'button', model: 'specialdays'},
+        { type: 'group', name: '選項管理', models: ['categories', 'daytypes', 'projectstages'] },
+    ]);
+
     dataAdmin.factory('starter', [function(){
         var that = {};
 
@@ -107,8 +116,8 @@ define(function (require) {
     }]);
 
     dataAdmin.controller('DataCtrl',
-            ['$scope', '$http', '$window', '$timeout', 'uiGridConstants', 'uiGridEditConstants', 'starter', '$templateCache',
-            function ($scope, $http, $window, $timeout, uiGridConstants, uiGridEditConstants, starter, $templateCache) {
+            ['$scope', '$http', '$window', '$timeout', 'uiGridConstants', 'uiGridEditConstants', 'starter', '$templateCache', 'nvabarConfig',
+            function ($scope, $http, $window, $timeout, uiGridConstants, uiGridEditConstants, starter, $templateCache, nvabarConfig) {
 
         $scope.pvt = {};
         var pvt = $scope.pvt;
@@ -122,16 +131,20 @@ define(function (require) {
             columnDefs: [],
         };
 
-        var modelName = '';
-
+        $scope.modelName = '';
         $scope.models = [];
+        $scope.modelNameMap = {};
+        $scope.nvabarConfig = nvabarConfig;
 
         pvt.init = function () {
-            modelName = pvt.getModelName($window.location.pathname);
+            $scope.modelName = pvt.getModelName($window.location.pathname);
             pvt.getModels().then(function (models) {
                 $scope.models = models;
+                models.forEach(function (model) {
+                    $scope.modelNameMap[model.model] = model.name;
+                });
             });
-            return pvt.getData(modelName).then(pvt.getDataDone);
+            return pvt.getData($scope.modelName).then(pvt.getDataDone);
         };
         starter.onInit(pvt.init);
 
@@ -246,7 +259,7 @@ define(function (require) {
         };
 
         $scope.saveDoc = function (doc) {
-            var promise = $http.post('/api/' + modelName, doc).then(function (res) {
+            var promise = $http.post('/api/' + $scope.modelName, doc).then(function (res) {
                 var key;
                 for (key in res.data.data) {
                     doc[key] = res.data.data[key];
