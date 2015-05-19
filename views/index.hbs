@@ -1,7 +1,10 @@
 <h2>Time Sheet</h2>
 
-<div ng-app="index" class="ng-app"></div>
+{{{{raw-helper}}}}
+<div class="ng-app" ng-controller="IndexCtrl">
+  charles is {{charles}}
+</div>
+{{{{/raw-helper}}}}
 
-{{#section 'script'}}
-  <script src="/js/index.js"></script>
+{{#section 'head'}}
 {{/section}}

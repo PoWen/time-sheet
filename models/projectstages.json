@@ -1,11 +1,11 @@
 {
-    "model": "departments",
-    "name": "部門資料",
+    "model": "projectstages",
+    "name": "專案階段",
     "schema": {
         "name": {
             "valueDef": "String",
             "setting": {
-                "name": "部門名稱",
+                "name": "階段名稱",
                 "col": 0
             }
         }

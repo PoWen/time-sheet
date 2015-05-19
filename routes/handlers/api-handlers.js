@@ -4,6 +4,7 @@ var Q = require('q');
 var mongoose = require('mongoose');
 
 var dbManager = require.main.require('./lib/db-manager.js');
+var modelManager = require.main.require('./lib/model-manager.js');
 
 var apiHandlers = {};
 apiHandlers.pvt = {};
@@ -74,12 +75,22 @@ pvt.filterSelectFields = function (fieldSettings) {
     var field, setting;
     for (field in fieldSettings) {
         setting = fieldSettings[field];
-        if (setting.type === 'select') {
+        if (isSelect(setting)) {
             result.push(field);
         }
     }
     return result;
 };
+var isSelect = function (setting) {
+    switch (setting.type) {
+        case 'select':
+        case 'multiselect':
+            return true;
+        default:
+            return false;
+    }
+};
+
 pvt.populateFieldOptions = function (fieldSetting, modelName) {
     var optionModelName = pvt.getOptionModelName(fieldSetting.key, modelName);
 
@@ -92,6 +103,8 @@ pvt.getOptionModelName = function (pathName, modelName) {
     var schema = mongoose.model(modelName).schema;
     var schemaType = schema.path(pathName);
 
+    //mongoose 會把建立 model 時的參數儲存在 schemaType.options
+    //此用法沒有寫在文件上，是直接看 schemaType 物件拿來用的
     return schemaType.options.ref;
 };
 pvt.getOptions = function (modelName, selectSpec) {
@@ -133,9 +146,13 @@ pvt.createDoc = createDoc;
 
 var updateDoc = function (modelName, doc) {
     var Model = dbManager.getDbModel(modelName);
-    var promise = Model.findOneAndUpdate({ _id: doc._id }, doc).exec();
+    var promise = Model.findOneAndUpdate({ _id: doc._id }, doc, { new: true }).exec();
     return promise;
 };
 pvt.updateDoc = updateDoc;
+
+apiHandlers.getModels = function (req, res) {
+    res.json(modelManager.getModels());
+};
 
 module.exports = apiHandlers;

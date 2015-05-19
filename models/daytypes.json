@@ -1,0 +1,20 @@
+{
+    "model": "daytypes",
+    "name": "日期種類",
+    "schema": {
+        "name": {
+            "valueDef": "String",
+            "setting": {
+                "name": "日期種類",
+                "col": 0
+            }
+        },
+        "isWorkDay": {
+            "valueDef": "String",
+            "setting": {
+                "name": "是否為上班日",
+                "col": 1
+            }
+        }
+    }
+}

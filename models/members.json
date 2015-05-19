@@ -1,28 +1,40 @@
 {
-    "name": "members",
+    "model": "members",
+    "name": "人員資料",
     "schema": {
         "name": {
-            "schemaType": "String",
+            "valueDef": "String",
             "setting": {
                 "name": "姓名",
                 "col": 0
             }
         },
         "jobTitle": {
-            "schemaType": "String",
+            "valueDef": "String",
             "setting": {
                 "name": "職稱",
                 "col": 1
             }
         },
         "department": {
-            "schemaType": {
+            "valueDef": {
                 "type": "ObjectId",
                 "ref": "departments"
             },
             "setting": {
                 "name": "部門",
                 "col": 2,
+                "type": "select"
+            }
+        },
+        "level": {
+            "valueDef": {
+                "type": "ObjectId",
+                "ref": "levels"
+            },
+            "setting": {
+                "name": "薪資水平",
+                "col": 3,
                 "type": "select"
             }
         }
