@@ -1,0 +1,14 @@
+{{#section 'head'}}
+  <link href="/lib/angular-ui-grid/ui-grid.min.css" rel="stylesheet">
+{{/section}}
+
+{{{{raw-helper}}}}
+<div class="container" ng-controller="DataCtrl">
+  <div class="grid-table" ui-grid="gridOptions" ui-grid-edit ui-grid-row-edit ui-grid-cellNav></div>
+</div>
+{{{{/raw-helper}}}}
+
+{{#section 'script'}}
+  <script src="/lib/angular-ui-grid/ui-grid.js"></script>
+  <script src="/js/login.js"></script>
+{{/section}}

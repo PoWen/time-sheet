@@ -39,7 +39,7 @@ var dbOpenCmd = 'npm run db'; //start cmd /k
 shell.exec(dbOpenCmd, {async:true});
 
 //run node server
-var nodeServerOpenCmd = 'npm run start'; //start cmd /k 
+var nodeServerOpenCmd = 'nodemon'; //start cmd /k 
 shell.exec(nodeServerOpenCmd, {async:true});
 //shell.echo("Server have run.");
 

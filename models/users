@@ -1,0 +1,15 @@
+'use strict';
+
+var mongoose = require('mongoose');
+
+var dbManager = require.main.require('./lib/db-manager.js');
+
+var userSchema = new mongoose.Schema({
+    user: String,
+    email: String,
+    password: String
+});
+
+var User = dbManager.getAccountDb().model('users', userSchema);
+
+module.exports = User;

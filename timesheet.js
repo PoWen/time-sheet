@@ -4,6 +4,10 @@
 var debug = require('debug')('app');
 var path = require('path');
 var express = require('express');
+var cookieParser = require('cookie-parser');
+var session = require('express-session');
+var MongoStore = require('connect-mongo')(session);
+var csrf = require('csurf');
 
 //load inner modules
 var environment = require.main.require('./lib/environment.js');
@@ -12,7 +16,7 @@ var routes = require.main.require('./routes/routes.js');
 
 var app = express();
 
-environment.set(app);
+environment.set(app); 
 
 dbManager.init();
 
@@ -38,7 +42,38 @@ app.set('port', process.env.PORT || 3000);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+//app.use(cookieParser());
+//app.use(session({secret: 'any secret key', cookie: {maxAge: 60000}}));//maxAge: session life-time in msec
+app.use(session({
+    secret: 'noSecret',
+    store: new MongoStore({
+      db : 'timesheet',
+      ttl: 14 * 24 * 60 * 60 // = 14 days. Default
+    })
+}));
+
+
 app.use('/', routes);
+
+app.use(csrf())
+ 
+// error handler
+app.use(function (err, req, res, next) {
+  if (err.code !== 'EBADCSRFTOKEN') return next(err)
+ 
+  // handle CSRF token errors here
+  res.status(403)
+  res.send('session has expired or form tampered with')
+})
+ 
+//routes after this
+
+// pass the csrfToken to the view
+app.get('/form', function(req, res) {
+  res.render('send', { csrfToken: req.csrfToken() })
+})
+//and in view file
+
 
 app.use(function (req, res) {
     res.status(404);
