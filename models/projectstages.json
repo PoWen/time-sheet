@@ -1,0 +1,13 @@
+{
+    "model": "projectstages",
+    "name": "專案階段",
+    "schema": {
+        "name": {
+            "valueDef": "String",
+            "setting": {
+                "name": "階段名稱",
+                "col": 0
+            }
+        }
+    }
+}

@@ -1,0 +1,42 @@
+{
+    "model": "members",
+    "name": "人員資料",
+    "schema": {
+        "name": {
+            "valueDef": "String",
+            "setting": {
+                "name": "姓名",
+                "col": 0
+            }
+        },
+        "jobTitle": {
+            "valueDef": "String",
+            "setting": {
+                "name": "職稱",
+                "col": 1
+            }
+        },
+        "department": {
+            "valueDef": {
+                "type": "ObjectId",
+                "ref": "departments"
+            },
+            "setting": {
+                "name": "部門",
+                "col": 2,
+                "type": "select"
+            }
+        },
+        "level": {
+            "valueDef": {
+                "type": "ObjectId",
+                "ref": "levels"
+            },
+            "setting": {
+                "name": "薪資水平",
+                "col": 3,
+                "type": "select"
+            }
+        }
+    }
+}

@@ -1,0 +1,35 @@
+{
+    "model": "projects",
+    "name": "專案資料",
+    "schema": {
+        "name": {
+            "valueDef": "String",
+            "setting": {
+                "name": "專案名稱",
+                "col": 0
+            }
+        },
+        "stage": {
+            "valueDef": {
+                "type": "ObjectId",
+                "ref": "projectstages"
+            },
+            "setting": {
+                "name": "專案階段",
+                "col": 1,
+                "type": "select"
+            }
+        },
+        "members": {
+            "valueDef": {
+                "type": ["ObjectId"],
+                "ref": "members"
+            },
+            "setting": {
+                "name": "參與人員",
+                "col": 2,
+                "type": "multiselect"
+            }
+        }
+    }
+}

@@ -6,7 +6,8 @@ var router = express.Router();
 
 var apiHandlers = require.main.require('./routes/handlers/api-handlers.js');
 
-router.get('/:model', apiHandlers.responseJsonDocs);
+router.get('/get-models', apiHandlers.getModels);
+router.get('/:model', apiHandlers.responseJsonConfigAndData);
 
 router.use(bodyparser.json());
 router.post('/:model', apiHandlers.saveJsonDocs);

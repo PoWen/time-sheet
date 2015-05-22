@@ -1,7 +1,7 @@
 exports.config = {
     allScriptsTimeout: 11000,
 
-    specs: [ '*.js' ],
+    specs: [ 'tests/**/*.js' ],
 
     capabilities: {
         'browserName': 'chrome',
@@ -11,7 +11,9 @@ exports.config = {
     
     baseUrl: 'http://localhost:3000/',
 
-    framework: 'jasmine',
+    rootElement: '.ng-app',
+
+    framework: 'jasmine2',
 
     jasmineNodeOpts: {
         defaultTimeoutInterval: 30000

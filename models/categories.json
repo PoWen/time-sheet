@@ -1,0 +1,13 @@
+{
+    "model": "categories",
+    "name": "工作類別",
+    "schema": {
+        "name": {
+            "valueDef": "String",
+            "setting": {
+                "name": "工作類別",
+                "col": 0
+            }
+        }
+    }
+}
